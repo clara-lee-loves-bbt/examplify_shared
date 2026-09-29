@@ -7,6 +7,9 @@
 # Regenerable PDF text dumps — rebuild with: python tools/extract-pdfs.py
 tools/text/
 
+# Node modules
+node_modules/
+
 # OS noise
 Thumbs.db
 .DS_Store
