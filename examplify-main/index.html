@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Examplify</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ============ Title bar ============ -->
+<div class="titlebar">
+  <div class="titlebar-left">
+    <span class="titlebar-mark">&#10022;</span>
+    <span class="titlebar-name">Examplify</span>
+  </div>
+  <div class="titlebar-buttons">
+    <span>&#8722;</span><span>&#9634;</span><span>&#10005;</span>
+  </div>
+</div>
+
+<!-- ============ System status strip ============ -->
+<div class="statusbar">
+  <span class="statusbar-icons">&#128267; <b id="battery">80%</b> <span id="clock">12:17</span> &#9676;</span>
+</div>
+
+<!-- ============ Exam selection screen ============ -->
+<section id="screen-picker" class="picker">
+  <div class="picker-inner">
+    <div class="picker-logo"><span class="picker-mark">&#10022;</span> Examplify</div>
+    <h1>CS1010E &mdash; Programming Methodology</h1>
+    <p class="picker-sub">Choose a paper to practise. Each paper is kept separate; answers are saved in this browser.</p>
+    <div id="exam-list" class="exam-list"></div>
+    <p class="picker-foot">Practice clone &middot; not affiliated with ExamSoft</p>
+  </div>
+</section>
+
+<!-- ============ Exam runner ============ -->
+<section id="screen-exam" class="app" hidden>
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="app-brand">
+      <span class="app-brand-icon">&#10022;</span>
+      <span class="app-brand-text">Examplify</span>
+    </div>
+    <div class="app-brand-sep"></div>
+    <div class="app-title" id="exam-title">&nbsp;</div>
+    <div class="app-remaining">
+      <span class="app-remaining-label" id="timer-label">TIME REMAINING</span>
+      <span class="app-remaining-clock" id="timer">90:00</span>
+    </div>
+    <div class="app-controls-wrap">
+      <div class="app-controls" id="exam-controls">
+        <button class="app-controls-btn" id="exam-controls-btn" type="button">
+          EXAM CONTROLS <span class="chev">&#65088;</span>
+        </button>
+        <div class="menu" id="exam-controls-menu" hidden>
+          <button type="button" data-action="submit">Submit Exam</button>
+          <button type="button" data-action="quit">Exit &amp; Discard</button>
+        </div>
+      </div>
+    </div>
+    <button class="app-toolkit" id="toolkit-btn" type="button">
+      <span>TOOL KIT</span><span class="toolkit-dots">&#8942;</span>
+    </button>
+    <div class="menu menu-right" id="toolkit-menu" hidden>
+      <button type="button" data-action="calc">Calculator</button>
+      <button type="button" data-action="notes">Notes</button>
+      <button type="button" data-action="highlights">Highlights</button>
+      <button type="button" data-action="legend">Keyboard Shortcuts</button>
+    </div>
+  </header>
+
+  <!-- Body -->
+  <div class="app-body">
+
+    <aside class="rail" id="rail">
+      <button class="rail-filter" id="rail-filter" type="button">FILTER &rsaquo;</button>
+      <button class="rail-caret" id="rail-up" type="button" title="Scroll up">&#8963;</button>
+      <div class="rail-list" id="rail-list"></div>
+      <button class="rail-caret" id="rail-down" type="button" title="Scroll down">&#8964;</button>
+      <div class="rail-filter-panel" id="rail-filter-panel" hidden>
+        <button type="button" data-filter="all">All questions</button>
+        <button type="button" data-filter="flagged">Flagged</button>
+        <button type="button" data-filter="unanswered">Unanswered</button>
+        <button type="button" data-filter="mcq">Multiple choice</button>
+        <button type="button" data-filter="fib">Fill in the blank</button>
+      </div>
+    </aside>
+
+    <main class="main" id="main">
+      <div class="q-head">
+        <div class="q-head-left">
+          <span class="q-label" id="q-label">Question 1</span>
+          <button class="q-label-chev" id="q-jump" type="button" title="Jump to question">&#8964;</button>
+          <div class="menu" id="q-jump-menu" hidden></div>
+        </div>
+        <button class="flag-btn" id="flag-btn" type="button">FLAG QUESTION</button>
+        <div class="q-more-wrap">
+          <button class="q-more" id="q-more" type="button">&#8226;&#8226;&#8226;</button>
+          <div class="menu menu-right" id="q-more-menu" hidden>
+            <button type="button" data-action="strike">Strike through</button>
+            <button type="button" data-action="highlight">Highlight</button>
+            <button type="button" data-action="clear">Clear highlights</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="q-scroll" id="q-scroll">
+        <div class="q-stem" id="q-stem"></div>
+        <div class="q-answers" id="q-answers"></div>
+      </div>
+
+      <div class="q-toast" id="q-toast" hidden></div>
+    </main>
+
+    <!-- ============ Toolkit Panel (Calculator) ============ -->
+    <aside class="toolkit-panel" id="toolkit-panel" hidden>
+      <div class="toolkit-tabs">
+        <button class="toolkit-tab" data-tab="tools" type="button">TOOLS</button>
+        <button class="toolkit-tab active" data-tab="calculators" type="button">CALCULATORS</button>
+      </div>
+
+      <div class="toolkit-content" id="toolkit-content">
+        <!-- Calculator Mode Toggle -->
+        <div class="calc-mode-toggle">
+          <button class="calc-mode-btn active" id="calc-mode-keyboard" data-mode="keyboard" type="button">Keyboard Friendly</button>
+          <button class="calc-mode-btn" id="calc-mode-classic" data-mode="classic" type="button">Classic</button>
+        </div>
+
+        <!-- ===== Keyboard Friendly Calculator ===== -->
+        <div class="calc-keyboard" id="calc-keyboard">
+          <div class="calc-kb-display-wrap">
+            <div class="calc-kb-history" id="calc-kb-history"></div>
+            <div class="calc-kb-input-box">
+              <input class="calc-kb-input" id="calc-kb-input" type="text" autocomplete="off" spellcheck="false" placeholder="">
+            </div>
+          </div>
+          <div class="calc-kb-controls">
+            <button class="calc-ctrl-btn" id="calc-kb-undo" type="button" title="Undo">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"/></svg>
+            </button>
+            <button class="calc-ctrl-btn" id="calc-kb-redo" type="button" title="Redo">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5v0A5.5 5.5 0 0 0 9.5 20H13"/></svg>
+            </button>
+            <span class="calc-ctrl-spacer"></span>
+            <button class="calc-ctrl-btn calc-ctrl-text" id="calc-kb-clear" type="button">clear all</button>
+            <button class="calc-ctrl-btn" id="calc-kb-backspace" type="button" title="Backspace">
+              <svg width="20" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg>
+            </button>
+          </div>
+          <div class="calc-kb-grid">
+            <button class="calc-btn func" data-val="(">(</button>
+            <button class="calc-btn func" data-val=")">)</button>
+            <button class="calc-btn func" data-val="√">√</button>
+            <button class="calc-btn func" data-val="^"><i>a</i><sup><i>b</i></sup></button>
+            <button class="calc-btn op" data-val="÷">÷</button>
+
+            <button class="calc-btn num" data-val="7">7</button>
+            <button class="calc-btn num" data-val="8">8</button>
+            <button class="calc-btn num" data-val="9">9</button>
+            <button class="calc-btn op span2" data-val="×">×</button>
+
+            <button class="calc-btn num" data-val="4">4</button>
+            <button class="calc-btn num" data-val="5">5</button>
+            <button class="calc-btn num" data-val="6">6</button>
+            <button class="calc-btn op span2" data-val="−">−</button>
+
+            <button class="calc-btn num" data-val="1">1</button>
+            <button class="calc-btn num" data-val="2">2</button>
+            <button class="calc-btn num" data-val="3">3</button>
+            <button class="calc-btn op span2" data-val="+">+</button>
+
+            <button class="calc-btn num" data-val="0">0</button>
+            <button class="calc-btn num" data-val=".">.</button>
+            <button class="calc-btn func" data-val="ans">ans</button>
+            <button class="calc-btn enter span2" id="calc-kb-enter" type="button">
+              <svg width="20" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 10 4 15 9 20"/><path d="M20 4v7a4 4 0 0 1-4 4H4"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- ===== Classic (Scientific) Calculator ===== -->
+        <div class="calc-classic" id="calc-classic" hidden>
+          <div class="calc-cl-display">
+            <div class="calc-cl-top">
+              <span class="calc-cl-deg" id="calc-cl-deg">DEG</span>
+              <span class="calc-cl-ans-label">Ans=</span>
+              <span class="calc-cl-ans-val" id="calc-cl-ans">0</span>
+            </div>
+            <input class="calc-cl-input" id="calc-cl-input" type="text" autocomplete="off" spellcheck="false" value="0" placeholder="0">
+          </div>
+          <div class="calc-cl-grid">
+            <button class="calc-btn cl-func cl-rad" id="calc-cl-rad" type="button">Radian</button>
+            <button class="calc-btn cl-func cl-inv" id="calc-cl-inv" type="button">INV</button>
+            <button class="calc-btn cl-func cl-ac" id="calc-cl-ac" type="button">AC</button>
+
+            <button class="calc-btn cl-btn" data-val="sin">sin</button>
+            <button class="calc-btn cl-btn" data-val="cos">cos</button>
+            <button class="calc-btn cl-btn" data-val="tan">tan</button>
+            <button class="calc-btn cl-btn" data-val="π">π</button>
+            <button class="calc-btn cl-btn" data-val="n!">n!</button>
+
+            <button class="calc-btn cl-btn" data-val="log">log</button>
+            <button class="calc-btn cl-btn" data-val="ln">ln</button>
+            <button class="calc-btn cl-btn" data-val="√">√</button>
+            <button class="calc-btn cl-btn" data-val="1/x">1/x</button>
+            <button class="calc-btn cl-btn" data-val="x^y"><i>x</i><sup><i>y</i></sup></button>
+
+            <button class="calc-btn cl-btn" data-val="7">7</button>
+            <button class="calc-btn cl-btn" data-val="8">8</button>
+            <button class="calc-btn cl-btn" data-val="9">9</button>
+            <button class="calc-btn cl-btn" data-val="(">(</button>
+            <button class="calc-btn cl-btn" data-val=")">)</button>
+
+            <button class="calc-btn cl-btn" data-val="4">4</button>
+            <button class="calc-btn cl-btn" data-val="5">5</button>
+            <button class="calc-btn cl-btn" data-val="6">6</button>
+            <button class="calc-btn cl-btn" data-val="×">×</button>
+            <button class="calc-btn cl-btn" data-val="÷">÷</button>
+
+            <button class="calc-btn cl-btn" data-val="1">1</button>
+            <button class="calc-btn cl-btn" data-val="2">2</button>
+            <button class="calc-btn cl-btn" data-val="3">3</button>
+            <button class="calc-btn cl-btn" data-val="+">+</button>
+            <button class="calc-btn cl-btn" data-val="−">−</button>
+
+            <button class="calc-btn cl-btn" data-val="0">0</button>
+            <button class="calc-btn cl-btn" data-val=".">.</button>
+            <button class="calc-btn cl-btn" data-val="EE">EE</button>
+            <button class="calc-btn cl-btn" id="calc-cl-del" type="button">Del</button>
+            <button class="calc-btn cl-btn" id="calc-cl-eq" type="button">=</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="toolkit-close">
+        <a href="#" id="toolkit-close-link">Close Toolkit</a>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="footer-progress">
+      <span id="footer-progress">1 OF 2 QUESTIONS</span>
+      <span class="footer-version">EXAMPLIFY VERSION 3W.12.0</span>
+    </div>
+    <div class="footer-nav">
+      <button class="btn-outline" id="prev-btn" type="button">Previous</button>
+      <button class="btn-solid" id="next-btn" type="button">Next</button>
+    </div>
+  </footer>
+</section>
+
+<!-- ============ Review / results ============ -->
+<section id="screen-review" class="review" hidden>
+  <header class="review-header">
+    <div class="app-brand">
+      <span class="app-brand-icon">&#10022;</span>
+      <span class="app-brand-text">Examplify</span>
+    </div>
+    <div class="app-brand-sep"></div>
+    <div class="app-title" id="review-title">&nbsp;</div>
+    <div class="review-header-actions">
+      <button class="btn-outline light" id="review-continue" type="button">Continue this paper</button>
+      <button class="btn-outline light" id="review-retake" type="button">Retake paper</button>
+      <button class="btn-outline light" id="review-back" type="button">Back to exams</button>
+    </div>
+  </header>
+
+  <div class="review-body">
+    <div class="review-summary">
+      <div class="score-ring" id="score-ring">
+        <span class="score-pct" id="score-pct">&mdash;</span>
+        <span class="score-cap">score</span>
+      </div>
+      <div class="review-stats" id="review-stats"></div>
+    </div>
+    <div class="review-breakdown" id="review-breakdown"></div>
+  </div>
+</section>
+
+<!-- ============ Modal ============ -->
+<div class="modal-backdrop" id="modal" hidden>
+  <div class="modal">
+    <h2 id="modal-title">Submit exam?</h2>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-actions" id="modal-actions"></div>
+  </div>
+</div>
+
+<script src="data/registry.js"></script>
+<script src="data/exam-midterm.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

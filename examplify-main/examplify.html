@@ -1,0 +1,3024 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Examplify</title>
+<style>
+/* ===========================================================
+   Examplify clone — styling derived from the interface CSS
+   =========================================================== */
+
+:root {
+  --bar-grey: #F3F3F3;
+  --strip-blue: #93D4EC;
+  --strip-text: #2D3E4D;
+  --header: #2B3E50;
+  --header-dark: #0C253B;
+  --rail-bg: #F0F3F5;
+  --rail-text: #2D4153;
+  --accent: #2C7CAF;
+  --accent-line: #2C7EAF;
+  --accent-soft: #2A7DB1;
+  --accent-text: #2879AB;
+  --footer: #D9EDF9;
+  --footer-text: #303F4E;
+  --footer-muted: #557387;
+  --option-bg: #F0F3F5;
+  --option-border: #A6A6A6;
+  --ink: #303030;
+  --ink-strong: #303F4E;
+  --ink-muted: #777777;
+  --ok: #2E7D4F;
+  --ok-bg: #E7F5EC;
+  --bad: #B03A2E;
+  --bad-bg: #FBEAE8;
+  --flag: #C9862B;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: #FFFFFF;
+  color: var(--ink);
+  font-family: Roboto, "Segoe UI", Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+button { font-family: inherit; cursor: pointer; }
+[hidden] { display: none !important; }
+
+/* ---------------- title bar ---------------- */
+.titlebar {
+  height: 22px;
+  background: var(--bar-grey);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px 0 2px;
+}
+.titlebar-left { display: flex; align-items: center; gap: 5px; padding-left: 4px; }
+.titlebar-mark { color: #059ADE; font-size: 19px; font-weight: 700; line-height: 19px; }
+.titlebar-name { font-size: 12px; color: #111111; }
+.titlebar-buttons { display: flex; align-items: center; gap: 34px; font-size: 19px; color: #111111; line-height: 22px; }
+
+/* ---------------- status strip ---------------- */
+.statusbar {
+  height: 28px;
+  background: var(--strip-blue);
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0 17px 0 0;
+}
+.statusbar-icons { color: var(--strip-text); font-weight: 700; font-size: 16px; }
+
+/* ===========================================================
+   Picker
+   =========================================================== */
+.picker {
+  min-height: calc(100vh - 50px);
+  background: linear-gradient(170deg, #2B3E50 0%, #1B2B3A 55%, #16222E 100%);
+  overflow-y: auto;
+}
+.picker-inner { max-width: 1080px; margin: 0 auto; padding: 56px 28px 64px; }
+.picker-logo { display: flex; align-items: center; gap: 10px; color: #FFFFFF; font-size: 22px; font-weight: 700; letter-spacing: .3px; }
+.picker-mark { color: #059ADE; font-size: 26px; }
+.picker h1 { color: #FFFFFF; font-size: 30px; font-weight: 500; margin: 26px 0 8px; }
+.picker-sub { color: #A9BFD0; font-size: 15px; margin: 0 0 30px; max-width: 640px; line-height: 22px; }
+.picker-foot { color: #6C8497; font-size: 12px; margin-top: 34px; }
+
+.exam-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+.exam-card {
+  text-align: left;
+  background: #FFFFFF;
+  border: none;
+  border-radius: 14px;
+  padding: 20px 22px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: transform .12s ease, box-shadow .12s ease;
+  box-shadow: 0 2px 10px rgba(0,0,0,.25);
+}
+.exam-card:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(0,0,0,.35); }
+.exam-card h2 { margin: 0; font-size: 17px; font-weight: 600; color: var(--ink-strong); }
+.exam-card .exam-card-source { font-size: 12px; color: var(--ink-muted); line-height: 17px; }
+.exam-card .exam-card-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 2px; }
+.chip {
+  font-size: 11.5px; font-weight: 600; letter-spacing: .3px;
+  padding: 4px 10px; border-radius: 30px; background: #EAF4F9; color: #2A6E96;
+}
+.chip.alt { background: #F1F3F4; color: #55707F; }
+.exam-card .exam-card-cta {
+  margin-top: 8px; align-self: flex-start;
+  background: var(--accent); color: #fff; border: none;
+  border-radius: 30px; padding: 9px 24px; font-size: 15px; font-weight: 500;
+}
+.exam-card .exam-card-resume { font-size: 12px; color: #2E7D4F; font-weight: 600; }
+
+/* ===========================================================
+   Exam shell
+   =========================================================== */
+.app { display: flex; flex-direction: column; height: calc(100vh - 50px); background: #FFFFFF; }
+
+.app-header {
+  position: relative;
+  height: 68px;
+  background: var(--header);
+  display: flex;
+  align-items: center;
+  flex: none;
+}
+.app-brand { display: flex; align-items: center; gap: 8px; padding-left: 26px; }
+.app-brand-icon { color: #0393F8; font-size: 26px; line-height: 1; }
+.app-brand-text { color: #FFFFFF; font-size: 25px; font-weight: 500; letter-spacing: .2px; }
+.app-brand-sep { width: 1px; height: 33px; background: #4A5C6E; margin: 0 16px 0 18px; }
+.app-title {
+  color: #FFFFFF; font-size: 16px; flex: 1 1 auto; min-width: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.app-remaining { display: flex; align-items: center; gap: 12px; padding: 0 39px 0 20px; flex: none; }
+.app-remaining-label { color: #FFFFFF; font-size: 15px; }
+.app-remaining-clock { color: #FFFFFF; font-size: 16px; font-variant-numeric: tabular-nums; }
+.app-remaining-clock.low { color: #FFC7C7; }
+.app-remaining-clock.over { color: #FFC46B; }
+.app-controls-wrap { position: relative; flex: none; }
+.app-controls-btn {
+  background: none; border: none; color: #FFFFFF; font-size: 16px;
+  display: flex; align-items: center; gap: 8px; padding: 10px 8px;
+}
+.app-controls-btn .chev { font-size: 12px; }
+.app-toolkit {
+  flex: none; width: 154px; height: 66px; margin-left: 24px;
+  background: var(--header-dark); border: none; color: #FFFFFF; font-size: 18px;
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+}
+.app-toolkit .toolkit-dots { font-weight: 700; }
+
+/* dropdown menus */
+.menu {
+  position: absolute; top: 100%; left: 0; z-index: 40;
+  background: #FFFFFF; border: 1px solid #C8D3DA; border-radius: 10px;
+  box-shadow: 0 10px 28px rgba(16,32,48,.28);
+  min-width: 200px; padding: 6px; display: flex; flex-direction: column;
+}
+.menu.menu-right { left: auto; right: 0; }
+.menu button {
+  background: none; border: none; text-align: left; font-size: 14px;
+  padding: 9px 12px; border-radius: 7px; color: var(--ink-strong);
+}
+.menu button:hover { background: #EDF4F8; }
+.menu .menu-head { font-size: 11px; letter-spacing: .6px; color: #8496A3; padding: 8px 12px 4px; font-weight: 700; }
+#toolkit-menu { top: 68px; right: 0; }
+.menu.menu-right.floating { position: absolute; }
+
+/* ---------------- body ---------------- */
+.app-body { flex: 1 1 auto; display: flex; min-height: 0; }
+
+/* rail */
+.rail {
+  position: relative;
+  width: 85px; flex: none;
+  background: var(--rail-bg);
+  display: flex; flex-direction: column; align-items: center;
+  gap: 4px; padding-bottom: 10px;
+}
+.rail-filter {
+  background: none; border: none; color: var(--rail-text); font-weight: 300;
+  font-size: 16px; padding: 18px 0 0; display: flex; align-items: center; gap: 5px;
+  width: 100%; justify-content: center;
+}
+.rail-caret {
+  background: none; border: none; color: var(--rail-text); font-size: 26px;
+  line-height: 1; padding: 4px 0; width: 100%;
+}
+.rail-caret:disabled { opacity: .3; cursor: default; }
+.rail-list {
+  flex: 1 1 auto; width: 100%; overflow-y: auto; display: flex;
+  flex-direction: column; align-items: center; gap: 16px; padding: 6px 0;
+  scrollbar-width: none;
+}
+.rail-list::-webkit-scrollbar { width: 0; height: 0; }
+
+.rail-dot {
+  width: 55px; height: 55px; flex: none; border-radius: 50%;
+  border: 3px solid transparent; background: transparent;
+  font-size: 15px; font-weight: 300; color: var(--rail-text);
+  display: flex; align-items: center; justify-content: center;
+}
+.rail-dot:hover { border-color: #B9CEDA; }
+.rail-dot.current { border-color: var(--accent-line); font-weight: 400; }
+.rail-dot.answered { background: var(--accent); color: #FFFFFF; font-weight: 500; }
+.rail-dot.answered:hover { border-color: #123A57; }
+.rail-dot.current.answered { background: var(--accent); border-color: #123A57; }
+.rail-dot { position: relative; }
+.rail-dot.flagged::after {
+  content: ""; position: absolute; top: 3px; right: 1px;
+  width: 12px; height: 12px; border-radius: 50%; background: var(--flag);
+  border: 2px solid var(--rail-bg);
+}
+
+.rail-filter-panel {
+  position: absolute; left: 86px; top: 0; z-index: 30;
+  background: #fff; border: 1px solid #C8D3DA; border-radius: 10px;
+  box-shadow: 0 10px 28px rgba(16,32,48,.28); padding: 6px; min-width: 180px;
+  display: flex; flex-direction: column;
+}
+.rail-filter-panel button {
+  background: none; border: none; text-align: left; font-size: 14px;
+  padding: 9px 12px; border-radius: 7px; color: var(--ink-strong);
+}
+.rail-filter-panel button:hover { background: #EDF4F8; }
+.rail-filter-panel button.active { background: #E2F0F8; font-weight: 600; }
+
+/* main */
+.main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; position: relative; }
+
+.q-head {
+  position: relative;
+  display: flex; align-items: center; gap: 17px;
+  padding: 16px 29px 0 25px; flex: none;
+}
+.q-head-left { display: flex; align-items: center; gap: 2px; position: relative; }
+.q-label { font-size: 16px; font-weight: 600; color: var(--ink-strong); padding-top: 2px; }
+.q-label-chev { background: none; border: none; font-size: 24px; color: var(--ink-strong); line-height: 1; padding: 0 4px; }
+.flag-btn {
+  background: none; border: 2px solid var(--accent-soft); border-radius: 30px;
+  color: var(--accent-text); font-weight: 600; font-size: 14px; letter-spacing: .4px;
+  padding: 8px 16px;
+}
+.flag-btn:hover { background: #F0F8FC; }
+.flag-btn.on { background: var(--flag); border-color: var(--flag); color: #FFFFFF; }
+.q-more-wrap { margin-left: auto; position: relative; }
+.q-more {
+  background: #F1F3F4; border: none; border-radius: 30px;
+  font-size: 23px; line-height: 17px; letter-spacing: 1px; color: var(--ink-strong);
+  padding: 0 7px; height: 17px; display: flex; align-items: center;
+}
+
+.q-scroll {
+  flex: 1 1 auto; overflow-y: auto; padding: 18px 29px 40px 29px;
+  display: flex; flex-direction: column;
+}
+.q-scroll::-webkit-scrollbar { width: 13px; }
+.q-scroll::-webkit-scrollbar-thumb { background: #CBD5DC; border-radius: 7px; border: 3px solid #fff; }
+
+.q-stem { max-width: 1000px; }
+.stem-text { font-family: Inter, Roboto, Arial, sans-serif; font-size: 16.3px; line-height: 24px; color: var(--ink); margin: 0 0 14px; }
+.stem-text.tight { margin-bottom: 6px; }
+.stem-text.lead { margin-bottom: 18px; }
+
+.code {
+  font-family: "Roboto Mono", "Consolas", "Menlo", monospace;
+  font-size: 16px; line-height: 22px; color: #303030;
+  background: #FAFBFC; border-left: 3px solid #E3EAEF;
+  padding: 12px 18px; margin: 0 0 18px; border-radius: 4px;
+  white-space: pre; overflow-x: auto; letter-spacing: .2px;
+}
+.code.plain .tok-op { color: #444444; }
+.code-note {
+  display: block; color: var(--ink-muted); font-family: "Roboto Mono", monospace;
+  font-size: 15px; letter-spacing: 1px;
+}
+.tok-kw { color: #2B5FD9; }
+.tok-def { color: #8A4FBE; }
+.tok-num { color: #E8730C; }
+.tok-str { color: #1E8E3E; }
+.tok-com { color: #8A9BA8; font-style: italic; }
+.tok-bool { color: #2B5FD9; }
+.tok-bi { color: #8A4FBE; }
+
+.inline-code {
+  font-family: "Roboto Mono", "Consolas", monospace;
+  font-size: 0.94em; background: #F0F4F7; border-radius: 4px;
+  padding: 1px 5px; color: #27506B;
+}
+
+.blank-chip {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px; border-radius: 50%;
+  border: 2px solid var(--accent-soft); background: #FFFFFF;
+  color: var(--accent-text); font-size: 14px; font-weight: 600;
+  vertical-align: middle; margin: 0 3px; font-family: Roboto, Arial, sans-serif;
+}
+.blank-chip.filled { background: #E2F0F8; }
+
+/* answers */
+.q-answers { max-width: 1000px; margin-top: 6px; }
+.answers-label { font-size: 16px; font-weight: 500; color: var(--ink-strong); margin: 22px 0 20px; }
+
+.opt {
+  position: relative;
+  width: 100%; display: flex; align-items: center; gap: 14px;
+  background: var(--option-bg); border: 2px solid var(--option-border);
+  border-radius: 40px; min-height: 61px; padding: 8px 24px; margin-bottom: 15px;
+  text-align: left; transition: border-color .12s ease, background .12s ease;
+}
+.opt:hover { border-color: #7C9FB4; }
+.opt.selected { border-color: var(--accent); background: #E6F2F9; }
+.opt-letter { font-weight: 600; font-size: 18px; color: #111111; flex: none; width: 16px; }
+.opt-text {
+  flex: 1 1 auto; font-family: "Roboto Mono", monospace;
+  font-size: 15px; line-height: 21px; color: var(--ink-muted); white-space: pre-wrap;
+}
+.opt.selected .opt-text { color: #23485E; }
+.opt-eye { flex: none; background: none; border: none; padding: 2px 2px 0; color: #111111; }
+.opt-eye svg { display: block; }
+
+/* Eliminated option: dimmed and struck through, but still selectable. */
+.opt.struck { background: #EBEDEF; border-color: #C6CDD2; }
+.opt.struck .opt-letter,
+.opt.struck .opt-text { text-decoration: line-through; }
+.opt.struck .opt-letter { color: #9AA6AE; }
+.opt.struck .opt-text { color: #A5AFB6; }
+.opt.struck.selected { background: #E6F2F9; border-color: var(--accent); }
+.opt.struck.selected .opt-text { color: #8FA3AE; }
+.opt-eye.on { color: #C0563F; }
+
+.opt.correct { border-color: var(--ok); background: var(--ok-bg); }
+.opt.correct .opt-text { color: var(--ok); }
+.opt.wrong { border-color: var(--bad); background: var(--bad-bg); }
+.opt.wrong .opt-text { color: var(--bad); }
+
+/* fill in the blank answer rows */
+.fib-row {
+  display: flex; align-items: center; gap: 16px;
+  background: var(--option-bg); border: 2px solid var(--option-border);
+  border-radius: 40px; min-height: 61px; padding: 8px 24px; margin-bottom: 15px;
+  transition: border-color .12s ease, box-shadow .12s ease, background .12s ease;
+}
+.fib-row:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(44,124,175,.20); background: #FFFFFF; }
+.fib-row.solved { border-color: var(--accent); background: #F7FBFD; }
+.fib-row.correct { border-color: var(--ok); background: var(--ok-bg); }
+.fib-row.wrong { border-color: var(--bad); background: var(--bad-bg); }
+.fib-num { font-size: 18px; font-weight: 600; color: #111111; flex: none; min-width: 22px; }
+.fib-input {
+  flex: 1 1 auto; border: none; border-bottom: 1px solid #C9D2D8; background: transparent;
+  font-family: "Roboto Mono", monospace; font-size: 15.5px; color: #23485E;
+  padding: 6px 2px; outline: none; min-width: 0;
+}
+.fib-input::placeholder { color: #AEBAC2; }
+.fib-expected { flex: none; font-family: "Roboto Mono", monospace; font-size: 13.5px; color: var(--ok); }
+.fib-row.wrong .fib-expected { color: var(--bad); }
+
+.answer-note { font-size: 13.5px; color: var(--ink-muted); margin: -6px 0 18px 6px; }
+
+/* toast */
+.q-toast {
+  position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%);
+  background: #26313A; color: #FFFFFF; font-size: 13.5px;
+  padding: 9px 18px; border-radius: 30px; box-shadow: 0 6px 18px rgba(0,0,0,.3);
+  z-index: 50;
+}
+
+/* ---------------- footer ---------------- */
+.app-footer {
+  flex: none; height: 65px; background: var(--footer);
+  display: flex; align-items: center; padding: 0 19px 0 30px; gap: 16px;
+}
+.footer-progress { display: flex; align-items: baseline; gap: 12px; flex: 1 1 auto; }
+#footer-progress { font-size: 12px; color: var(--footer-text); letter-spacing: .2px; }
+.footer-version { font-size: 12px; font-weight: 300; color: var(--footer-muted); }
+.footer-nav { display: flex; align-items: center; gap: 14px; }
+.btn-solid {
+  background: var(--accent); border: none; border-radius: 30px; color: #FFFFFF;
+  font-size: 18px; font-weight: 500; padding: 12px 40px; min-width: 142px;
+}
+.btn-solid:hover { background: #26648F; }
+.btn-outline {
+  background: transparent; border: 2px solid var(--accent); border-radius: 30px;
+  color: var(--accent); font-size: 18px; font-weight: 500; padding: 10px 34px; min-width: 142px;
+}
+.btn-outline:hover { background: rgba(44,124,175,.08); }
+.btn-outline.light { border-color: #FFFFFF; color: #FFFFFF; font-size: 15px; padding: 8px 22px; min-width: 0; }
+.btn-outline.light:hover { background: rgba(255,255,255,.12); }
+.btn-solid.finish { background: #1E7A3E; }
+.btn-solid.finish:hover { background: #186633; }
+
+/* ===========================================================
+   Review
+   =========================================================== */
+.review { display: flex; flex-direction: column; height: calc(100vh - 50px); background: #EEF3F6; }
+.review-header { height: 68px; background: var(--header); display: flex; align-items: center; flex: none; }
+.review-header .app-title { padding-right: 20px; }
+.review-header-actions { padding-right: 22px; flex: none; display: flex; gap: 12px; flex-wrap: wrap; justify-content: flex-end; }
+.review-body { flex: 1 1 auto; overflow-y: auto; padding: 30px 32px 60px; }
+.review-summary { display: flex; align-items: center; gap: 34px; background: #fff; border-radius: 16px; padding: 26px 30px; box-shadow: 0 2px 10px rgba(16,32,48,.10); }
+.score-ring {
+  width: 132px; height: 132px; flex: none; border-radius: 50%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  border: 8px solid #D8E4EC; background: #FBFDFE;
+}
+.score-ring.good { border-color: #9CD3AE; }
+.score-ring.mid { border-color: #F0CE94; }
+.score-ring.bad { border-color: #EFAFA6; }
+.score-pct { font-size: 30px; font-weight: 700; color: var(--ink-strong); }
+.score-cap { font-size: 11px; letter-spacing: 1px; color: #8496A3; text-transform: uppercase; }
+.review-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 14px 26px; flex: 1 1 auto; }
+.review-stat { display: flex; flex-direction: column; gap: 3px; }
+.review-stat .k { font-size: 11.5px; letter-spacing: .8px; text-transform: uppercase; color: #8496A3; font-weight: 700; }
+.review-stat .v { font-size: 21px; font-weight: 600; color: var(--ink-strong); }
+.review-stat .v.ok { color: var(--ok); }
+.review-stat .v.bad { color: var(--bad); }
+
+.review-breakdown { margin-top: 24px; display: flex; flex-direction: column; gap: 14px; }
+.review-card { background: #fff; border-radius: 14px; padding: 18px 22px; box-shadow: 0 2px 8px rgba(16,32,48,.08); border-left: 5px solid #C8D3DA; }
+.review-card.ok { border-left-color: var(--ok); }
+.review-card.bad { border-left-color: var(--bad); }
+.review-card.skipped { border-left-color: #C8A24B; }
+.review-card-head { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; flex-wrap: wrap; }
+.review-card-head .num { font-size: 15px; font-weight: 700; color: var(--ink-strong); }
+.review-card-head .verdict { font-size: 12px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase; padding: 3px 10px; border-radius: 30px; }
+.verdict.ok { background: var(--ok-bg); color: var(--ok); }
+.verdict.bad { background: var(--bad-bg); color: var(--bad); }
+.verdict.skip { background: #F1F3F4; color: #6C8497; }
+.review-card-head .marks { margin-left: auto; font-size: 12.5px; color: #8496A3; }
+.review-card .given, .review-card .expected { font-family: "Roboto Mono", monospace; font-size: 13.5px; line-height: 20px; white-space: pre-wrap; word-break: break-word; }
+.review-card .given { color: #2E5A76; }
+.review-card .expected { color: var(--ok); }
+.review-card .explain { font-size: 13.5px; line-height: 20px; color: #55707F; margin-top: 6px; }
+.review-card .review-stem { font-size: 13.5px; line-height: 20px; color: #55707F; margin-top: 8px; font-family: Inter, sans-serif; }
+.review-back-btn {
+  background: none; border: none; color: var(--accent); font-size: 13.5px; font-weight: 600;
+  padding: 4px 0; align-self: flex-start;
+}
+
+/* ===========================================================
+   Modal
+   =========================================================== */
+.modal-backdrop {
+  position: fixed; inset: 0; background: rgba(16,32,48,.55);
+  display: flex; align-items: center; justify-content: center; z-index: 100;
+}
+.modal {
+  background: #FFFFFF; border-radius: 14px; padding: 26px 30px;
+  width: min(560px, calc(100vw - 40px)); box-shadow: 0 20px 50px rgba(0,0,0,.35);
+}
+.modal h2 { margin: 0 0 12px; font-size: 20px; color: var(--ink-strong); font-weight: 600; }
+.modal-body { font-size: 14.5px; line-height: 22px; color: #55707F; }
+.modal-body ul { margin: 10px 0 0; padding-left: 20px; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; }
+.modal-actions .btn-outline, .modal-actions .btn-solid { font-size: 15px; padding: 10px 26px; min-width: 0; }
+
+@media (max-width: 900px) {
+  .app-remaining, .app-controls-wrap { display: none; }
+  .app-toolkit { width: 110px; margin-left: 12px; }
+  .rail { width: 68px; }
+  .rail-dot { width: 44px; height: 44px; font-size: 13px; }
+}
+
+/* ===========================================================
+   Toolkit Panel (Calculator)
+   =========================================================== */
+.toolkit-panel {
+  width: 360px;
+  flex: none;
+  background: #FFFFFF;
+  border-left: 1px solid #D0D7DE;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  box-shadow: -2px 0 6px rgba(0, 0, 0, 0.04);
+}
+
+/* --- Tabs --- */
+.toolkit-tabs {
+  display: flex;
+  height: 44px;
+  background: #ECEFF1;
+  border-bottom: 1px solid #D5DBE1;
+  flex: none;
+}
+.toolkit-tab {
+  flex: 1;
+  background: #ECEFF1;
+  border: none;
+  padding: 0;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .6px;
+  color: #5A6A78;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background .15s ease, color .15s ease;
+}
+.toolkit-tab:hover {
+  color: #2D3E4D;
+}
+.toolkit-tab.active {
+  background: #FFFFFF;
+  color: #1A202C;
+  border-bottom: 1px solid #FFFFFF;
+  margin-bottom: -1px;
+}
+
+/* --- Content area --- */
+.toolkit-content {
+  flex: 1 1 auto;
+  padding: 14px 14px 10px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+.toolkit-content::-webkit-scrollbar {
+  width: 5px;
+}
+.toolkit-content::-webkit-scrollbar-thumb {
+  background: #CCD4DC;
+  border-radius: 3px;
+}
+
+/* --- Mode toggle (Pill design) --- */
+.calc-mode-toggle {
+  display: flex;
+  background: #E8ECEF;
+  border-radius: 24px;
+  padding: 3px;
+  margin-bottom: 14px;
+  flex: none;
+}
+.calc-mode-btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: #333333;
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 7px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background .15s ease, color .15s ease;
+  text-align: center;
+}
+.calc-mode-btn.active {
+  background: #2377C8;
+  color: #FFFFFF;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+.calc-mode-btn:not(.active):hover {
+  color: #000000;
+}
+
+/* ===== Keyboard Friendly Calculator ===== */
+.calc-kb-display-wrap {
+  margin-bottom: 4px;
+}
+.calc-kb-history {
+  border: 1px solid #D5DBE1;
+  border-radius: 4px;
+  background: #FFFFFF;
+  min-height: 48px;
+  padding: 8px 12px;
+  font-size: 14.5px;
+  color: #333333;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-height: 80px;
+  overflow-y: auto;
+}
+.calc-kb-history:empty::before {
+  content: '';
+  display: block;
+}
+.calc-kb-history::-webkit-scrollbar { width: 3px; }
+.calc-kb-history::-webkit-scrollbar-thumb { background: #CBD5E1; }
+.calc-kb-history .calc-hist-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+.calc-kb-history .calc-hist-expr {
+  color: #333333;
+  font-size: 15px;
+}
+.calc-kb-history .calc-hist-res {
+  color: #333333;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.calc-kb-history .calc-hist-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: 1px solid #A0AEC0;
+  border-radius: 9px;
+  font-size: 11px;
+  color: #718096;
+}
+
+.calc-kb-input-box {
+  border: 1px solid #D5DBE1;
+  border-radius: 4px;
+  background: #FFFFFF;
+  height: 46px;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  transition: border-color .15s ease;
+}
+.calc-kb-input-box:focus-within {
+  border: 2px solid #2377C8;
+  padding: 0 11px;
+}
+.calc-kb-input {
+  flex: 1 1 auto;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 17px;
+  color: #2D3748;
+  background: transparent;
+  width: 100%;
+}
+
+/* Controls row */
+.calc-kb-controls {
+  display: flex;
+  align-items: center;
+  padding: 8px 2px 10px;
+  gap: 8px;
+}
+.calc-ctrl-btn {
+  background: none;
+  border: none;
+  color: #94A3B8;
+  cursor: pointer;
+  padding: 4px 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: color .15s ease, background .15s ease;
+}
+.calc-ctrl-btn:hover {
+  color: #475569;
+  background: #F1F5F9;
+}
+.calc-ctrl-text {
+  font-size: 13.5px;
+  color: #94A3B8;
+  font-family: inherit;
+  font-weight: 500;
+}
+.calc-ctrl-spacer { flex: 1; }
+
+/* Button grid — keyboard friendly */
+.calc-kb-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+.calc-btn {
+  border: 1px solid #D5DBE1;
+  border-radius: 5px;
+  font-size: 16px;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 10px 0;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.2;
+  transition: background .12s ease, border-color .12s ease;
+  user-select: none;
+}
+.calc-btn:active {
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+/* Number buttons — medium grey */
+.calc-kb-grid .calc-btn.num {
+  background: #CCD2D8;
+  border-color: #BCC4CB;
+  color: #2D3748;
+  font-weight: 400;
+}
+.calc-kb-grid .calc-btn.num:hover {
+  background: #BDC5CC;
+}
+/* The trailing operator in each number row (×, −, +, ↵) fills two columns, so
+   every number button stays exactly one column wide — as in Examplify, where
+   7/8/9 and 0 are all identical in size. */
+.calc-kb-grid .calc-btn.span2 {
+  grid-column: span 2;
+}
+
+/* Function & operator buttons — white */
+.calc-kb-grid .calc-btn.func,
+.calc-kb-grid .calc-btn.op {
+  background: #FFFFFF;
+  border-color: #D5DBE1;
+  color: #4A5568;
+  font-weight: 400;
+}
+.calc-kb-grid .calc-btn.func:hover,
+.calc-kb-grid .calc-btn.op:hover {
+  background: #F1F4F7;
+}
+
+/* Enter button — blue */
+.calc-kb-grid .calc-btn.enter {
+  background: #2377C8;
+  border-color: #1F6EB8;
+  color: #FFFFFF;
+}
+.calc-kb-grid .calc-btn.enter:hover {
+  background: #1B65A8;
+}
+
+/* ===== Classic (Scientific) Calculator ===== */
+.calc-cl-display {
+  border: 1px solid #D5DBE1;
+  border-radius: 4px;
+  background: #FFFFFF;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  min-height: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.calc-cl-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #718096;
+}
+.calc-cl-deg {
+  font-weight: 600;
+  color: #4A5568;
+}
+.calc-cl-ans-label {
+  color: #8A9BA8;
+}
+.calc-cl-ans-val {
+  color: #4A5568;
+  font-weight: 500;
+  margin-left: 2px;
+}
+.calc-cl-input {
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 22px;
+  color: #2D3748;
+  text-align: right;
+  background: transparent;
+  padding: 0;
+  width: 100%;
+}
+
+/* Classic Grid — 5 columns */
+.calc-cl-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  padding-bottom: 8px;
+}
+.calc-cl-grid .calc-btn {
+  background: #FFFFFF;
+  border: 1px solid #D5DBE1;
+  border-radius: 5px;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 400;
+  color: #2D3748;
+  cursor: pointer;
+  padding: 10px 0;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.2;
+  transition: background .12s ease, border-color .12s ease;
+  user-select: none;
+}
+.calc-cl-grid .calc-btn:hover {
+  background: #F1F4F7;
+}
+.calc-cl-grid .calc-btn:active {
+  background: #E2E8F0;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Spans in first row */
+.calc-cl-grid .cl-rad {
+  grid-column: 1 / 3; /* Spans 2 columns, sits above sin & cos */
+}
+.calc-cl-grid .cl-inv {
+  grid-column: 3 / 5; /* Spans 2 columns, sits above tan & π */
+}
+.calc-cl-grid .cl-ac {
+  grid-column: 5 / 6; /* 1 column, sits above n! */
+}
+.calc-cl-grid .calc-btn.active-toggle {
+  background: #E2E8F0;
+  border-color: #A0AEC0;
+  font-weight: 600;
+}
+
+/* --- Close Toolkit --- */
+.toolkit-close {
+  flex: none;
+  text-align: center;
+  padding: 14px 0 16px;
+  border-top: 1px solid #E0E6EB;
+  background: #FFFFFF;
+}
+.toolkit-close a {
+  color: #2377C8;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+}
+.toolkit-close a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 900px) {
+  .toolkit-panel { width: 300px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ Title bar ============ -->
+<div class="titlebar">
+  <div class="titlebar-left">
+    <span class="titlebar-mark">&#10022;</span>
+    <span class="titlebar-name">Examplify</span>
+  </div>
+  <div class="titlebar-buttons">
+    <span>&#8722;</span><span>&#9634;</span><span>&#10005;</span>
+  </div>
+</div>
+
+<!-- ============ System status strip ============ -->
+<div class="statusbar">
+  <span class="statusbar-icons">&#128267; <b id="battery">80%</b> <span id="clock">12:17</span> &#9676;</span>
+</div>
+
+<!-- ============ Exam selection screen ============ -->
+<section id="screen-picker" class="picker">
+  <div class="picker-inner">
+    <div class="picker-logo"><span class="picker-mark">&#10022;</span> Examplify</div>
+    <h1>CS1010E &mdash; Programming Methodology</h1>
+    <p class="picker-sub">Choose a paper to practise. Each paper is kept separate; answers are saved in this browser.</p>
+    <div id="exam-list" class="exam-list"></div>
+    <p class="picker-foot">Practice clone &middot; not affiliated with ExamSoft</p>
+  </div>
+</section>
+
+<!-- ============ Exam runner ============ -->
+<section id="screen-exam" class="app" hidden>
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="app-brand">
+      <span class="app-brand-icon">&#10022;</span>
+      <span class="app-brand-text">Examplify</span>
+    </div>
+    <div class="app-brand-sep"></div>
+    <div class="app-title" id="exam-title">&nbsp;</div>
+    <div class="app-remaining">
+      <span class="app-remaining-label" id="timer-label">TIME REMAINING</span>
+      <span class="app-remaining-clock" id="timer">90:00</span>
+    </div>
+    <div class="app-controls-wrap">
+      <div class="app-controls" id="exam-controls">
+        <button class="app-controls-btn" id="exam-controls-btn" type="button">
+          EXAM CONTROLS <span class="chev">&#65088;</span>
+        </button>
+        <div class="menu" id="exam-controls-menu" hidden>
+          <button type="button" data-action="submit">Submit Exam</button>
+          <button type="button" data-action="quit">Exit &amp; Discard</button>
+        </div>
+      </div>
+    </div>
+    <button class="app-toolkit" id="toolkit-btn" type="button">
+      <span>TOOL KIT</span><span class="toolkit-dots">&#8942;</span>
+    </button>
+    <div class="menu menu-right" id="toolkit-menu" hidden>
+      <button type="button" data-action="calc">Calculator</button>
+      <button type="button" data-action="notes">Notes</button>
+      <button type="button" data-action="highlights">Highlights</button>
+      <button type="button" data-action="legend">Keyboard Shortcuts</button>
+    </div>
+  </header>
+
+  <!-- Body -->
+  <div class="app-body">
+
+    <aside class="rail" id="rail">
+      <button class="rail-filter" id="rail-filter" type="button">FILTER &rsaquo;</button>
+      <button class="rail-caret" id="rail-up" type="button" title="Scroll up">&#8963;</button>
+      <div class="rail-list" id="rail-list"></div>
+      <button class="rail-caret" id="rail-down" type="button" title="Scroll down">&#8964;</button>
+      <div class="rail-filter-panel" id="rail-filter-panel" hidden>
+        <button type="button" data-filter="all">All questions</button>
+        <button type="button" data-filter="flagged">Flagged</button>
+        <button type="button" data-filter="unanswered">Unanswered</button>
+        <button type="button" data-filter="mcq">Multiple choice</button>
+        <button type="button" data-filter="fib">Fill in the blank</button>
+      </div>
+    </aside>
+
+    <main class="main" id="main">
+      <div class="q-head">
+        <div class="q-head-left">
+          <span class="q-label" id="q-label">Question 1</span>
+          <button class="q-label-chev" id="q-jump" type="button" title="Jump to question">&#8964;</button>
+          <div class="menu" id="q-jump-menu" hidden></div>
+        </div>
+        <button class="flag-btn" id="flag-btn" type="button">FLAG QUESTION</button>
+        <div class="q-more-wrap">
+          <button class="q-more" id="q-more" type="button">&#8226;&#8226;&#8226;</button>
+          <div class="menu menu-right" id="q-more-menu" hidden>
+            <button type="button" data-action="strike">Strike through</button>
+            <button type="button" data-action="highlight">Highlight</button>
+            <button type="button" data-action="clear">Clear highlights</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="q-scroll" id="q-scroll">
+        <div class="q-stem" id="q-stem"></div>
+        <div class="q-answers" id="q-answers"></div>
+      </div>
+
+      <div class="q-toast" id="q-toast" hidden></div>
+    </main>
+
+    <!-- ============ Toolkit Panel (Calculator) ============ -->
+    <aside class="toolkit-panel" id="toolkit-panel" hidden>
+      <div class="toolkit-tabs">
+        <button class="toolkit-tab" data-tab="tools" type="button">TOOLS</button>
+        <button class="toolkit-tab active" data-tab="calculators" type="button">CALCULATORS</button>
+      </div>
+
+      <div class="toolkit-content" id="toolkit-content">
+        <!-- Calculator Mode Toggle -->
+        <div class="calc-mode-toggle">
+          <button class="calc-mode-btn active" id="calc-mode-keyboard" data-mode="keyboard" type="button">Keyboard Friendly</button>
+          <button class="calc-mode-btn" id="calc-mode-classic" data-mode="classic" type="button">Classic</button>
+        </div>
+
+        <!-- ===== Keyboard Friendly Calculator ===== -->
+        <div class="calc-keyboard" id="calc-keyboard">
+          <div class="calc-kb-display-wrap">
+            <div class="calc-kb-history" id="calc-kb-history"></div>
+            <div class="calc-kb-input-box">
+              <input class="calc-kb-input" id="calc-kb-input" type="text" autocomplete="off" spellcheck="false" placeholder="">
+            </div>
+          </div>
+          <div class="calc-kb-controls">
+            <button class="calc-ctrl-btn" id="calc-kb-undo" type="button" title="Undo">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"/></svg>
+            </button>
+            <button class="calc-ctrl-btn" id="calc-kb-redo" type="button" title="Redo">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5v0A5.5 5.5 0 0 0 9.5 20H13"/></svg>
+            </button>
+            <span class="calc-ctrl-spacer"></span>
+            <button class="calc-ctrl-btn calc-ctrl-text" id="calc-kb-clear" type="button">clear all</button>
+            <button class="calc-ctrl-btn" id="calc-kb-backspace" type="button" title="Backspace">
+              <svg width="20" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg>
+            </button>
+          </div>
+          <div class="calc-kb-grid">
+            <button class="calc-btn func" data-val="(">(</button>
+            <button class="calc-btn func" data-val=")">)</button>
+            <button class="calc-btn func" data-val="√">√</button>
+            <button class="calc-btn func" data-val="^"><i>a</i><sup><i>b</i></sup></button>
+            <button class="calc-btn op" data-val="÷">÷</button>
+
+            <button class="calc-btn num" data-val="7">7</button>
+            <button class="calc-btn num" data-val="8">8</button>
+            <button class="calc-btn num" data-val="9">9</button>
+            <button class="calc-btn op span2" data-val="×">×</button>
+
+            <button class="calc-btn num" data-val="4">4</button>
+            <button class="calc-btn num" data-val="5">5</button>
+            <button class="calc-btn num" data-val="6">6</button>
+            <button class="calc-btn op span2" data-val="−">−</button>
+
+            <button class="calc-btn num" data-val="1">1</button>
+            <button class="calc-btn num" data-val="2">2</button>
+            <button class="calc-btn num" data-val="3">3</button>
+            <button class="calc-btn op span2" data-val="+">+</button>
+
+            <button class="calc-btn num" data-val="0">0</button>
+            <button class="calc-btn num" data-val=".">.</button>
+            <button class="calc-btn func" data-val="ans">ans</button>
+            <button class="calc-btn enter span2" id="calc-kb-enter" type="button">
+              <svg width="20" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 10 4 15 9 20"/><path d="M20 4v7a4 4 0 0 1-4 4H4"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- ===== Classic (Scientific) Calculator ===== -->
+        <div class="calc-classic" id="calc-classic" hidden>
+          <div class="calc-cl-display">
+            <div class="calc-cl-top">
+              <span class="calc-cl-deg" id="calc-cl-deg">DEG</span>
+              <span class="calc-cl-ans-label">Ans=</span>
+              <span class="calc-cl-ans-val" id="calc-cl-ans">0</span>
+            </div>
+            <input class="calc-cl-input" id="calc-cl-input" type="text" autocomplete="off" spellcheck="false" value="0" placeholder="0">
+          </div>
+          <div class="calc-cl-grid">
+            <button class="calc-btn cl-func cl-rad" id="calc-cl-rad" type="button">Radian</button>
+            <button class="calc-btn cl-func cl-inv" id="calc-cl-inv" type="button">INV</button>
+            <button class="calc-btn cl-func cl-ac" id="calc-cl-ac" type="button">AC</button>
+
+            <button class="calc-btn cl-btn" data-val="sin">sin</button>
+            <button class="calc-btn cl-btn" data-val="cos">cos</button>
+            <button class="calc-btn cl-btn" data-val="tan">tan</button>
+            <button class="calc-btn cl-btn" data-val="π">π</button>
+            <button class="calc-btn cl-btn" data-val="n!">n!</button>
+
+            <button class="calc-btn cl-btn" data-val="log">log</button>
+            <button class="calc-btn cl-btn" data-val="ln">ln</button>
+            <button class="calc-btn cl-btn" data-val="√">√</button>
+            <button class="calc-btn cl-btn" data-val="1/x">1/x</button>
+            <button class="calc-btn cl-btn" data-val="x^y"><i>x</i><sup><i>y</i></sup></button>
+
+            <button class="calc-btn cl-btn" data-val="7">7</button>
+            <button class="calc-btn cl-btn" data-val="8">8</button>
+            <button class="calc-btn cl-btn" data-val="9">9</button>
+            <button class="calc-btn cl-btn" data-val="(">(</button>
+            <button class="calc-btn cl-btn" data-val=")">)</button>
+
+            <button class="calc-btn cl-btn" data-val="4">4</button>
+            <button class="calc-btn cl-btn" data-val="5">5</button>
+            <button class="calc-btn cl-btn" data-val="6">6</button>
+            <button class="calc-btn cl-btn" data-val="×">×</button>
+            <button class="calc-btn cl-btn" data-val="÷">÷</button>
+
+            <button class="calc-btn cl-btn" data-val="1">1</button>
+            <button class="calc-btn cl-btn" data-val="2">2</button>
+            <button class="calc-btn cl-btn" data-val="3">3</button>
+            <button class="calc-btn cl-btn" data-val="+">+</button>
+            <button class="calc-btn cl-btn" data-val="−">−</button>
+
+            <button class="calc-btn cl-btn" data-val="0">0</button>
+            <button class="calc-btn cl-btn" data-val=".">.</button>
+            <button class="calc-btn cl-btn" data-val="EE">EE</button>
+            <button class="calc-btn cl-btn" id="calc-cl-del" type="button">Del</button>
+            <button class="calc-btn cl-btn" id="calc-cl-eq" type="button">=</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="toolkit-close">
+        <a href="#" id="toolkit-close-link">Close Toolkit</a>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="footer-progress">
+      <span id="footer-progress">1 OF 2 QUESTIONS</span>
+      <span class="footer-version">EXAMPLIFY VERSION 3W.12.0</span>
+    </div>
+    <div class="footer-nav">
+      <button class="btn-outline" id="prev-btn" type="button">Previous</button>
+      <button class="btn-solid" id="next-btn" type="button">Next</button>
+    </div>
+  </footer>
+</section>
+
+<!-- ============ Review / results ============ -->
+<section id="screen-review" class="review" hidden>
+  <header class="review-header">
+    <div class="app-brand">
+      <span class="app-brand-icon">&#10022;</span>
+      <span class="app-brand-text">Examplify</span>
+    </div>
+    <div class="app-brand-sep"></div>
+    <div class="app-title" id="review-title">&nbsp;</div>
+    <div class="review-header-actions">
+      <button class="btn-outline light" id="review-continue" type="button">Continue this paper</button>
+      <button class="btn-outline light" id="review-retake" type="button">Retake paper</button>
+      <button class="btn-outline light" id="review-back" type="button">Back to exams</button>
+    </div>
+  </header>
+
+  <div class="review-body">
+    <div class="review-summary">
+      <div class="score-ring" id="score-ring">
+        <span class="score-pct" id="score-pct">&mdash;</span>
+        <span class="score-cap">score</span>
+      </div>
+      <div class="review-stats" id="review-stats"></div>
+    </div>
+    <div class="review-breakdown" id="review-breakdown"></div>
+  </div>
+</section>
+
+<!-- ============ Modal ============ -->
+<div class="modal-backdrop" id="modal" hidden>
+  <div class="modal">
+    <h2 id="modal-title">Submit exam?</h2>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-actions" id="modal-actions"></div>
+  </div>
+</div>
+
+<script>
+/* ===== data/registry.js ===== */
+/* Shared exam registry.
+   Each data file calls registerExam({...}) once, at load time. */
+(function () {
+  window.EXAMPLIFY_EXAMS = window.EXAMPLIFY_EXAMS || [];
+  window.registerExam = function (exam) {
+    window.EXAMPLIFY_EXAMS.push(exam);
+  };
+})();
+</script>
+<script>
+/* ===== data/exam-midterm.js ===== */
+/* MID-TERM EXAM (Semester 1 : AY 2025/26)
+   (file: cs1010e_2526S1_midterm.pdf) — 31 questions.
+   The source PDF is the question paper only, so every key here was derived
+   by working the question out rather than copied from a provided answer sheet. */
+registerExam({
+  id: 'midterm',
+  title: 'MID-TERM EXAM (Semester 1 : AY 2025/26)',
+  headerName: 'MID-TERM EXAM (Semester 1 : AY 2025/26)',
+  source: 'cs1010e_2526S1_midterm.pdf',
+  duration: 90,
+  sections: [
+    { name: 'Part A — One mark each', from: 1, to: 12, marks: 1 },
+    { name: 'Part B — Two marks each', from: 13, to: 23, marks: 2 },
+    { name: 'Part C — Fill in the blanks (3–4 marks each)', from: 24, to: 31, marks: 3 }
+  ],
+  questions: [
+    {
+      n: 1, marks: 1, type: 'mcq',
+      stem: [
+        { p: 'Given that the `**` operator is right associative and has a higher precedence than the `*` operator, which of the options is equivalent to the following expression?' },
+        { code: '2 * 3 ** 4 ** 5' }
+      ],
+      options: [
+        { l: 'A', t: '2 * (3 ** (4 ** 5))' },
+        { l: 'B', t: '2 * ((3 ** 4) ** 5)' },
+        { l: 'C', t: '(2 * 3) ** (4 ** 5)' },
+        { l: 'D', t: '((2 * 3) ** 4) ** 5' },
+        { l: 'E', t: '(2 * (3 ** 4)) ** 5' }
+      ],
+      answer: 'A',
+      explanation: 'Right associativity groups the exponents from the right: 3 ** (4 ** 5). The multiplication sits outside because ** binds tighter than *.'
+    },
+    {
+      n: 2, marks: 1, type: 'mcq',
+      stem: [
+        { p: 'What is returned from the following evaluation?' },
+        { code: '>>> 50 % 3' }
+      ],
+      options: [
+        { l: 'A', t: '2' }, { l: 'B', t: '0' }, { l: 'C', t: '1' },
+        { l: 'D', t: '3' }, { l: 'E', t: 'None of the above' }
+      ],
+      answer: 'A',
+      explanation: '50 = 16 * 3 + 2, so the remainder is 2.'
+    },
+    {
+      n: 3, marks: 1, type: 'mcq',
+      stem: [
+        { p: 'Given the following function definition:' },
+        { code: 'def foo(x):\n    def gee(x):\n        return 3 * x\n    return gee(2 + x)' },
+        { p: 'What is the result of the following evaluation?' },
+        { code: '>>> foo(5)' }
+      ],
+      options: [
+        { l: 'A', t: '21' }, { l: 'B', t: '7' }, { l: 'C', t: '15' },
+        { l: 'D', t: '17' }, { l: 'E', t: 'Error' }
+      ],
+      answer: 'A',
+      explanation: 'gee is called with 2 + 5 = 7, so it returns 3 * 7 = 21. The inner x shadows the outer one.'
+    },
+    {
+      n: 4, marks: 1, type: 'mcq',
+      stem: [
+        { p: 'What is returned from the following evaluation, given that x holds the value 1?' },
+        { code: '>>> 3 if x == 1 else -3' }
+      ],
+      options: [
+        { l: 'A', t: '3' }, { l: 'B', t: 'True' }, { l: 'C', t: 'False' },
+        { l: 'D', t: '-3' }, { l: 'E', t: 'None of the above' }
+      ],
+      answer: 'A',
+      explanation: 'The condition is True, so the conditional expression yields 3 — not the Boolean True.'
+    },
+    {
+      n: 5, marks: 1, type: 'mcq',
+      stem: [
+        { p: 'What will be returned from the following evaluation?' },
+        { code: '>>> tuple(map(lambda x: x, range(10, 0, -2)))' }
+      ],
+      options: [
+        { l: 'A', t: '(10, 8, 6, 4, 2)' }, { l: 'B', t: '(2, 4, 6, 8, 10)' },
+        { l: 'C', t: '(10, 8, 6, 4, 2, 0)' }, { l: 'D', t: '(0, 2, 4, 6, 8, 10)' },
+        { l: 'E', t: 'None of the above' }
+      ],
+      answer: 'A',
+      explanation: 'Starts at 10, steps by -2, stops before 0. The stop value is exclusive, so 0 is not produced.'
+    },
+    {
+      n: 6, marks: 1, type: 'mcq',
+      stem: [
+        { p: 'What will be returned from the following evaluation?' },
+        { code: '>>> tuple(range(3, 0, -1))' }
+      ],
+      options: [
+        { l: 'A', t: '(3, 2, 1)' }, { l: 'B', t: '(3, 2, 1, 0)' },
+        { l: 'C', t: '(2, 1)' }, { l: 'D', t: '(2, 1, 0)' },
+        { l: 'E', t: 'None of the above' }
+      ],
+      answer: 'A',
+      explanation: 'range(3, 0, -1) yields 3, 2, 1. The stop of 0 is exclusive.'
+    },
+    {
+      n: 7, marks: 1, type: 'mcq',
+      stem: [
+        { p: 'What will be returned from the following evaluation?' },
+        { code: ">>> 'my@love'[2:7]" }
+      ],
+      options: [
+        { l: 'A', t: "'@love'" }, { l: 'B', t: "'love'" }, { l: 'C', t: "'lov'" },
+        { l: 'D', t: "'@lov'" }, { l: 'E', t: 'None of the above' }
+      ],
+      answer: 'A',
+      explanation: "Indices 2 to 6 inclusive are '@', 'l', 'o', 'v', 'e'."
+    },
+    {
+      n: 8, marks: 1, type: 'mcq',
+      stem: [
+        { p: 'What will be returned from the following evaluation?' },
+        { code: '>>> (1, 3, 5, 7) + (2, 4)' }
+      ],
+      options: [
+        { l: 'A', t: '(1, 2, 3, 4, 5, 7)' },
+        { l: 'B', t: '(1, 3, 5, 7, (2, 4))' },
+        { l: 'C', t: '((1, 3, 5, 7), (2, 4))' },
+        { l: 'D', t: 'Error' },
+        { l: 'E', t: 'None of the above' }
+      ],
+      answer: 'E',
+      explanation: '+ concatenates tuples rather than interleaving or nesting: the result is (1, 3, 5, 7, 2, 4), which is not listed, so the answer is E.'
+    },
+    {
+      n: 9, marks: 1, type: 'mcq',
+      stem: [
+        { p: 'What value is printed when the following program is evaluated?' },
+        { code: 'def cnt():\n    count = 0\n    for x in range(10):\n        for y in range(x):\n            count = count + 1\n    print(count)\n\n>>> cnt()' }
+      ],
+      options: [
+        { l: 'A', t: '45' }, { l: 'B', t: '55' }, { l: 'C', t: '36' },
+        { l: 'D', t: '10' }, { l: 'E', t: '9' }
+      ],
+      answer: 'A',
+      explanation: 'The inner loop runs x times, so the total is 0 + 1 + ... + 9 = 45.'
+    },
+    {
+      n: 10, marks: 1, type: 'mcq',
+      stem: [
+        { p: 'Given the following function definition:' },
+        { code: "def hoo(n):\n    if n <= 1:\n        return 1\n    else:\n        print(n, end=' ')\n        return 2 * hoo(n - 1)" },
+        { p: 'What is the sequence of values printed by the print function when the following is evaluated?' },
+        { code: '>>> hoo(6)' }
+      ],
+      options: [
+        { l: 'A', t: '6  5  4  3  2' }, { l: 'B', t: '2  3  4  5  6' },
+        { l: 'C', t: '32  16  8  4  2' }, { l: 'D', t: '2  4  8  16  32' },
+        { l: 'E', t: '6  12  24  48  96' }
+      ],
+      answer: 'A',
+      explanation: 'The print happens on the way down, before the recursive call, so the values descend from 6 to 2.'
+    },
+    {
+      n: 11, marks: 1, type: 'mcq',
+      stem: [
+        { p: 'What will be printed from the following piece of python code is being executed?' },
+        { code: 'res = ()\na = 4\nwhile a > 2:\n    res = res + (a, a + 1)\n    a -= 1\nprint(res)' }
+      ],
+      options: [
+        { l: 'A', t: '(4, 5, 3, 4)' }, { l: 'B', t: '((4, 5), (3, 4))' },
+        { l: 'C', t: '(3, 4, 4, 5)' }, { l: 'D', t: '((3, 4), (4, 5))' },
+        { l: 'E', t: 'None of the above' }
+      ],
+      answer: 'A',
+      explanation: '(a, a + 1) is a two-element tuple, and + concatenates flat: () → (4, 5) → (4, 5, 3, 4). The loop stops once a reaches 2.'
+    },
+    {
+      n: 12, marks: 1, type: 'mcq',
+      stem: [
+        { p: 'What will be returned by evaluating the function call `rec2(2, 1)`?' },
+        { code: 'def rec2(n, m):\n    if n == 0 or m == 0:\n        return 1\n    return rec2(n - 1, m) + rec2(n - 1, m - 1)' }
+      ],
+      options: [
+        { l: 'A', t: '1' }, { l: 'B', t: '2' }, { l: 'C', t: '4' },
+        { l: 'D', t: 'Error' }, { l: 'E', t: 'None of the above' }
+      ],
+      answer: 'E',
+      explanation: 'rec2(2,1) = rec2(1,1) + rec2(1,0) = (rec2(0,1) + rec2(0,0)) + 1 = (1 + 1) + 1 = 3, which is not among A–D, so E.'
+    },
+
+    {
+      n: 13, marks: 2, type: 'mcq',
+      stem: [
+        { p: 'Given that x has value 3 and y has value 0, what is returned from the following evaluation?' },
+        { code: '>>> x + x if x != 3 and x // y > 0 else y + y' }
+      ],
+      options: [
+        { l: 'A', t: '0' }, { l: 'B', t: '3' }, { l: 'C', t: '6' },
+        { l: 'D', t: 'Error' }, { l: 'E', t: 'None of the above' }
+      ],
+      answer: 'A',
+      explanation: 'x != 3 is False, so `and` short-circuits and x // y is never evaluated. The condition is False, so the else branch gives 0 + 0 = 0.'
+    },
+    {
+      n: 14, marks: 2, type: 'mcq',
+      stem: [
+        { p: 'What will be returned from the execution of the function call `mR1((5, 4, 3))`?' },
+        { code: 'from functools import reduce\n\ndef mR1(tup):\n    return reduce(lambda a, b: a + ((b, tup[b]),),\n                  range(len(tup)))' }
+      ],
+      options: [
+        { l: 'A', t: 'Error' },
+        { l: 'B', t: '((0, 5), (1, 4), (2, 3))' },
+        { l: 'C', t: '((), (0, 5), (1, 4), (2, 3))' },
+        { l: 'D', t: '(0, 5, 1, 4, 2, 3)' },
+        { l: 'E', t: 'None of the above' }
+      ],
+      answer: 'A',
+      explanation: 'With no initializer reduce seeds the accumulator from the sequence itself, so the first call is 0 + ((1, tup[1]),) — an int plus a tuple, which raises TypeError. An initializer of () would have been needed.'
+    },
+    {
+      n: 15, marks: 2, type: 'mcq',
+      stem: [
+        { p: 'Given the following function definition:' },
+        { code: 'def fun(g, h, x, y):\n    return g(x) + h(y)' },
+        { p: 'What is the result of the following evaluation?' },
+        { code: '>>> x = 2\n>>> y = 3\n>>> fun(lambda x: x - y, lambda y: x * y, 7, 4)' }
+      ],
+      options: [
+        { l: 'A', t: '12' }, { l: 'B', t: '5' }, { l: 'C', t: '15' },
+        { l: 'D', t: '25' }, { l: 'E', t: '31' }
+      ],
+      answer: 'A',
+      explanation: 'Each lambda parameter shadows the global of the same name only inside its own body: the first computes 7 - 3 = 4 and the second computes 2 * 4 = 8. Total 12.'
+    },
+    {
+      n: 16, marks: 2, type: 'mcq',
+      stem: [
+        { p: 'Given the following function definition:' },
+        { code: 'def fun(x, y):\n    z = 2\n    return lambda y, z: 100 * x + 10 * y + z' },
+        { p: 'What is the result of the following evaluation?' },
+        { code: '>>> (fun(5, 6))(7, 8)' }
+      ],
+      options: [
+        { l: 'A', t: '578' }, { l: 'B', t: '562' }, { l: 'C', t: '572' },
+        { l: 'D', t: '568' }, { l: 'E', t: '786' }
+      ],
+      answer: 'A',
+      explanation: 'x = 5 is captured from the enclosing call; the lambda parameters supply y = 7 and z = 8, giving 500 + 70 + 8 = 578. The local z = 2 is shadowed.'
+    },
+    {
+      n: 17, marks: 2, type: 'mcq',
+      stem: [
+        { p: 'Given the following definition of the function D:' },
+        { code: "def D(m, x):\n    print(m, end=' ')\n    return x" },
+        { p: 'What is the sequence of values printed by the print function when the following is evaluated?' },
+        { code: ">>> ( D('P', True) and D('Q', False) ) and \\\n... ( D('R', False) or D('S', True) )" }
+      ],
+      options: [
+        { l: 'A', t: 'P Q' }, { l: 'B', t: 'P Q R S' }, { l: 'C', t: 'P Q R' },
+        { l: 'D', t: 'P R' }, { l: 'E', t: 'P' }
+      ],
+      answer: 'A',
+      explanation: "The left group short-circuits at the second call: D('P', True) and D('Q', False) evaluates both and yields False, so the outer `and` skips the right group entirely."
+    },
+    {
+      n: 18, marks: 2, type: 'mcq',
+      stem: [
+        { p: 'How many times will the line `count += 1` be executed?' },
+        { code: 'i = 0\nj = 10\ncount = 0\nwhile i < j:\n    i += 1\n    j -= 1\n    count += 1' }
+      ],
+      options: [
+        { l: 'A', t: '5' }, { l: 'B', t: '6' }, { l: 'C', t: '0' },
+        { l: 'D', t: '10' }, { l: 'E', t: 'Infinite loop' }
+      ],
+      answer: 'A',
+      explanation: 'The gap closes by 2 each pass: (0,10) → (1,9) → (2,8) → (3,7) → (4,6) → (5,5), where the test fails. Five iterations.'
+    },
+    {
+      n: 19, marks: 2, type: 'mcq',
+      stem: [
+        { p: 'What will be returned from the following evaluation?' },
+        { code: '>>> tup = (1, (2, 4), 3, (4, 2), 1)\n>>> tup[ tup[-2][ tup[0] ] ]' }
+      ],
+      options: [
+        { l: 'A', t: '3' }, { l: 'B', t: '2' }, { l: 'C', t: '4' },
+        { l: 'D', t: '1' }, { l: 'E', t: 'Error' }
+      ],
+      answer: 'A',
+      explanation: 'tup[-2] is (4, 2) and tup[0] is 1, so the inner index gives 2, and tup[2] is 3.'
+    },
+    {
+      n: 20, marks: 2, type: 'mcq',
+      stem: [
+        { p: 'What will be returned from the following evaluation?' },
+        { code: ">>> tuple( filter( lambda x: '0' < x < '9', 'CS1010E' ) )" }
+      ],
+      options: [
+        { l: 'A', t: "('1', '1')" }, { l: 'B', t: "('11',)" },
+        { l: 'C', t: "('1', '0', '1', '0')" }, { l: 'D', t: "('1010',)" },
+        { l: 'E', t: 'Error' }
+      ],
+      answer: 'A',
+      explanation: 'Both comparisons are strict, so the two 0s fail the left test. filter over a string yields individual characters, not joined substrings — and the 1s sit at non-adjacent positions anyway.'
+    },
+    {
+      n: 21, marks: 2, type: 'mcq',
+      stem: [
+        { p: 'Given that x, y and z are three positive integers. What is the most accurate description of the range of values to be assigned to r from the following evaluation?' },
+        { code: '>>> r = x % y % z' }
+      ],
+      options: [
+        { l: 'A', t: '0 <= r < min(x, y, z)' },
+        { l: 'B', t: '0 <= r < x' },
+        { l: 'C', t: '0 <= r < y' },
+        { l: 'D', t: '0 <= r < z' },
+        { l: 'E', t: '0 <= r < max(x, y, z)' }
+      ],
+      answer: 'E',
+      explanation: 'The expression is (x % y) % z. Careful: r < y and r < z are also always true, so C and D hold as well and only the max bound is a description valid without knowing which of y and z is smaller. B fails (x = 2, y = 5, z = 7 gives r = 2), and A fails for the same example. Treat this item as ambiguous.'
+    },
+    {
+      n: 22, marks: 2, type: 'mcq',
+      stem: [
+        { p: 'Which of the following expressions will always produce the same value as expression t1 below?' },
+        { code: ">>> t1 = tuple(filter(lambda x: 100 % int(x), \\\n...                   filter(lambda x: ord('9') > ord(x) > ord('0'), s)))" }
+      ],
+      options: [
+        { l: 'A', t: "tuple(filter(lambda x: ord('9') > ord(x) > ord('0') and 100 % int(x), s))" },
+        { l: 'B', t: "tuple(filter(lambda x: 100 % int(x) and ord('9') > ord(x) > ord('0'), s))" },
+        { l: 'C', t: "tuple(filter(lambda x: 100 % int(x) or ord('9') > ord(x) > ord('0'), s))" },
+        { l: 'D', t: 'Both A and B above' },
+        { l: 'E', t: 'None of the above' }
+      ],
+      answer: 'A',
+      explanation: "B reverses the tests, so int(x) is applied to non-digit characters and int('C') raises ValueError. A keeps the digit test first and `and` short-circuits, preserving the protection."
+    },
+    {
+      n: 23, marks: 2, type: 'fib',
+      stem: [
+        { p: 'Using less than 20 ASCII characters, state one big event to be happening in Singapore in these few days? (A blank answer will receive 0 mark.)' }
+      ],
+      blanks: [
+        { n: 1, answer: '', freeform: true, maxLength: 20 }
+      ],
+      explanation: 'Free-response warm-up item. Any non-empty answer under 20 characters is accepted.'
+    },
+
+    {
+      n: 24, marks: 3, type: 'fib',
+      stem: [
+        { p: 'The function `zip_tup` takes in two tuples of equal length and returns a tuple that contains all the elements of the first input tuple interleaved with the elements of the second input tuple. For example,' },
+        { code: ">>> zip_tup((1, 2, 3, 4), (5, 6, 7, 8))\n(1, 5, 2, 6, 3, 7, 4, 8)" },
+        { p: 'Complete the following definition of zip_tup by filling in the three missing expressions:' },
+        { code: 'def zip_tup(t1, t2):\n    if len(t1) == 0:\n        return ()\n    else:\n        return {{1}} + zip_tup({{2}}, {{3}})' }
+      ],
+      blanks: [
+        { n: 1, answer: '(t1[0], t2[0])' },
+        { n: 2, answer: 't1[1:]' },
+        { n: 3, answer: 't2[1:]' }
+      ],
+      explanation: 'Take both heads as a two-element tuple, then recurse on both tails so the tuples stay in step.'
+    },
+    {
+      n: 25, marks: 3, type: 'fib',
+      stem: [
+        { p: 'What is the result of evaluating the call `tfold((5, 4, 3, 2))` given the following function definition?' },
+        { code: 'from functools import reduce\n\ndef tfold(tup):\n    return reduce(lambda a, b: (a[0] + (a[1] + b,), b),\n                  tup[1:], ((), tup[0]))[0]' }
+      ],
+      blanks: [
+        { n: 1, answer: '(9, 7, 5)' }
+      ],
+      explanation: 'The accumulator carries the growing tuple and the previous element: ((9,), 4) → ((9, 7), 3) → ((9, 7, 5), 2), and [0] discards the carry. These are the sums of adjacent pairs.'
+    },
+    {
+      n: 26, marks: 3, type: 'fib',
+      stem: [
+        { p: 'Given the following function definition:' },
+        { code: 'def fofo(f):\n    return lambda x: f(f(x))' },
+        { p: 'What is the result of the following evaluation?' },
+        { code: '>>> (fofo(lambda x: 3 * x + 1))(5)' }
+      ],
+      blanks: [
+        { n: 1, answer: '49' }
+      ],
+      explanation: 'f is applied twice: inner 3 * 5 + 1 = 16, outer 3 * 16 + 1 = 49.'
+    },
+    {
+      n: 27, marks: 3, type: 'fib',
+      stem: [
+        { p: 'Complete the recursive function `rev(t)` which reverses a tuple.' },
+        { code: 'def rev(t):\n    if not t:  # or len(t) == 0\n        return ()\n    else:\n        return {{1}} + {{2}}' }
+      ],
+      blanks: [
+        { n: 1, answer: 'rev(t[1:])' },
+        { n: 2, answer: '(t[0],)' }
+      ],
+      explanation: 'Recurse on the tail first so the head lands at the end. (t[0],) needs the trailing comma — without it you are adding an integer to a tuple.'
+    },
+    {
+      n: 28, marks: 3, type: 'fib',
+      stem: [
+        { p: 'Define `linspace` that takes in the start, end and num (with num >= 2), so as to generate a tuple of num values between start and end, where each adjacent pair of values is equidistant apart.' },
+        { code: '>>> linspace(1.0, 10.0, 10)\n(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0)\n>>> linspace(1.0, 10.0, 9)\n(1.0, 2.125, 3.25, 4.375, 5.5, 6.625, 7.75, 8.875, 10.0)' },
+        { p: 'Complete the linspace function by filling in the blank from the choices given.' },
+        { code: 'def linspace(start, end, num):\n    return tuple(map(lambda i: {{1}} + start, range(num)))' }
+      ],
+      blanks: [
+        { n: 1, answer: 'i * (end - start) / (num - 1)' }
+      ],
+      explanation: 'There are num - 1 equal gaps between num points, so the step size is (end - start) / (num - 1). Using num would miss the endpoint.'
+    },
+    {
+      n: 29, marks: 3, type: 'fib',
+      stem: [
+        { p: 'Given the following function definition:' },
+        { code: "def huu2(n):\n    if n <= 1:\n        return '1'\n    else:\n        x = huu2(n - 1) + huu2(n - 2)\n        return x + '#'" },
+        { p: 'What will be returned from evaluating the following call?' },
+        { code: '>>> huu2(4)' }
+      ],
+      blanks: [
+        { n: 1, answer: "'11#1#11##'" }
+      ],
+      explanation: "huu2(2) = '11#', huu2(3) = '11#1#', huu2(4) = '11#1#' + '11#' + '#'."
+    },
+    {
+      n: 30, marks: 4, type: 'fib',
+      stem: [
+        { p: 'A polynomial can be represented as a tuple of coefficients starting with the coefficient of the highest power. For instance, x^3 + 2x^2 - 4x + 3 is represented by (1, 2, -4, 3) and 2x^4 - x^2 + 5 is represented by (2, 0, -1, 0, 5).' },
+        { p: 'Define the `polyval` function that takes in a tuple representing a polynomial followed by an iterable of values of x, and returns a tuple of evaluated values. Here are some sample runs:' },
+        { code: '>>> polyval((3, 4), (0, 1, 2))\n(4, 7, 10)\n>>> polyval((-2, 0, 5), range(0, 4))\n(5, 3, -3, -13)' },
+        { p: 'Complete the polyval function.' },
+        { code: 'def polyval(poly, v):\n    f = lambda x: sum(map(lambda i: {{1}}, range(len(poly))))\n    return {{2}}' }
+      ],
+      blanks: [
+        { n: 1, answer: 'poly[i] * x**(len(poly) - 1 - i)' },
+        { n: 2, answer: 'tuple(map(f, v))' }
+      ],
+      explanation: 'Highest-power-first ordering means the exponent for index i is len(poly) - 1 - i. Blank 2 must wrap the map in tuple(), since map returns an iterator.'
+    },
+    {
+      n: 31, marks: 4, type: 'fib',
+      stem: [
+        { p: 'When two polynomials (highest-power-first, as in the previous question) are added, the result is a new polynomial. For example:' },
+        { code: '>>> polyadd((15, 0, -3, 15, -40), (3, 0, -2, -6))\n(15, 3, -3, 13, -46)\n>>> polyadd((3, 5, 6), (2, 8, -5))\n(5, 13, 1)' },
+        { p: 'Complete the following definition of the polyadd function:' },
+        { code: 'def polyadd(poly1, poly2):\n    result = ()\n    maxlen = max(len(poly1), len(poly2))\n\n    def f(poly, i):\n        return {{1}}\n\n    for i in range(1, maxlen + 1):\n        result = result + (f(poly1, i) + f(poly2, i),)\n\n    return {{2}}' }
+      ],
+      blanks: [
+        { n: 1, answer: 'poly[-i] if i <= len(poly) else 0' },
+        { n: 2, answer: 'result[::-1]' }
+      ],
+      explanation: 'Coefficients are consumed from the back, and a polynomial shorter than maxlen contributes 0 for the missing places. The loop builds the answer from the lowest power up, so it has to be reversed at the end.'
+    }
+  ]
+});
+</script>
+<script>
+/* ===== app.js ===== */
+/* =========================================================================
+   Examplify practice clone
+   ========================================================================= */
+(function () {
+  'use strict';
+
+  var EXAMS = window.EXAMPLIFY_EXAMS || [];
+  var STORE = 'examplify:v1:';
+
+  /* ---------------------------------------------------------------- helpers */
+  var $ = function (id) { return document.getElementById(id); };
+
+  /* Bind a handler only when the element is actually present. Markup and script
+     can drift apart; a mismatch in one panel must never abort the rest of the
+     app's wiring (which is how the paper picker used to disappear). */
+  function on(id, event, handler) {
+    var node = $(id);
+    if (node) node.addEventListener(event, handler);
+    return node;
+  }
+
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  }
+
+  function esc(s) {
+    return String(s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  /* Examplify counts in MM:SS, so a 90-minute paper reads 90:00, not 1:30:00. */
+  function fmtClock(sec) {
+    sec = Math.max(0, sec);
+    var m = Math.floor(sec / 60), s = sec % 60;
+    return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+  }
+
+  function normalize(s) {
+    return String(s == null ? '' : s)
+      .replace(/[\u2018\u2019\u201C\u201D]/g, "'")
+      .replace(/"/g, "'")
+      .replace(/\s+/g, '');
+  }
+
+  /* ------------------------------------------------------------ highlighting */
+  var PY_KEYWORDS = {};
+  ('def return if elif else for while in not and or lambda from import True False None ' +
+   'is pass break continue global nonlocal as with yield try except finally raise class ' +
+   'del assert').split(' ').forEach(function (k) { PY_KEYWORDS[k] = true; });
+
+  var PY_BUILTINS = {};
+  ('print range len map filter reduce sum abs max min str int float tuple list dict set ' +
+   'round ord chr all any sorted reversed enumerate zip bool pow divmod type isinstance ' +
+   'repr id hash iter next input format').split(' ').forEach(function (k) { PY_BUILTINS[k] = true; });
+
+  var TOKEN_RE = /(#[^\n]*)|('(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*")|(\b\d+(?:\.\d+)?\b)|([A-Za-z_]\w*)|(\s+)|([^\sA-Za-z_0-9])/g;
+
+  /* Shared "eliminate this option" icon. currentColor so CSS can tint it. */
+  var EYE_SVG = '<svg width="24" height="18" viewBox="0 0 24 18" fill="none">' +
+    '<path d="M12 3C6.5 3 2.2 7.1 1 9c1.2 1.9 5.5 6 11 6s9.8-4.1 11-6c-1.2-1.9-5.5-6-11-6z" stroke="currentColor" stroke-width="1.5"/>' +
+    '<circle cx="12" cy="9" r="3" stroke="currentColor" stroke-width="1.5"/></svg>';
+
+  function highlightCode(src) {
+    var out = '';
+    var lastKw = '';
+    var m;
+    TOKEN_RE.lastIndex = 0;
+    while ((m = TOKEN_RE.exec(src)) !== null) {
+      var txt = m[0];
+      if (m[1]) {
+        out += '<span class="tok-com">' + esc(txt) + '</span>';
+      } else if (m[2]) {
+        out += '<span class="tok-str">' + esc(txt) + '</span>';
+      } else if (m[3]) {
+        out += '<span class="tok-num">' + esc(txt) + '</span>';
+      } else if (m[4]) {
+        var cls = null;
+        if (PY_KEYWORDS[txt]) cls = 'tok-kw';
+        else if (lastKw === 'def') cls = 'tok-def';
+        else if (PY_BUILTINS[txt]) cls = 'tok-bi';
+        out += cls ? '<span class="' + cls + '">' + esc(txt) + '</span>' : esc(txt);
+        if (PY_KEYWORDS[txt]) lastKw = txt;
+      } else {
+        out += esc(txt);
+      }
+    }
+    return out;
+  }
+
+  /* Render code that may contain {{n}} blank chips. */
+  function renderCode(code, filled) {
+    var parts = String(code).split(/(\{\{\d+\}\})/);
+    var html = parts.map(function (p) {
+      var b = /^\{\{(\d+)\}\}$/.exec(p);
+      if (b) {
+        var n = b[1];
+        var isFilled = filled && filled[n];
+        return '<span class="blank-chip' + (isFilled ? ' filled' : '') + '">' + n + '</span>';
+      }
+      return highlightCode(p);
+    }).join('');
+    var pre = el('pre', 'code');
+    pre.innerHTML = html;
+    return pre;
+  }
+
+  /* Paragraph text: `segments` in backticks become inline code. */
+  function renderParagraph(text) {
+    var p = el('p', 'stem-text');
+    var parts = String(text).split(/(`[^`]+`)/);
+    p.innerHTML = parts.map(function (part) {
+      if (/^`[^`]+`$/.test(part)) {
+        return '<code class="inline-code">' + esc(part.slice(1, -1)) + '</code>';
+      }
+      return esc(part);
+    }).join('');
+    return p;
+  }
+
+  /* ------------------------------------------------------------------ state */
+  var session = null;      // active exam state
+  var exam = null;         // active exam definition
+  var timerId = null;
+  var reviewLook = false;  // true while inspecting a question from the results screen
+
+  function storeKey(id) { return STORE + id; }
+
+  function loadSaved(id) {
+    try {
+      var raw = localStorage.getItem(storeKey(id));
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) { return null; }
+  }
+
+  function save() {
+    if (!session) return;
+    try {
+      localStorage.setItem(storeKey(exam.id), JSON.stringify(session));
+    } catch (e) { /* storage full or blocked — practice mode still works */ }
+  }
+
+  function freshSession() {
+    return {
+      answers: {},          // questionNo -> { sel } | { blanks: {n: text} }
+      strikes: {},          // questionNo -> { letter: true }  (elimination marks)
+      flagged: {},
+      current: 1,
+      remaining: exam.duration * 60,
+      submitted: false,
+      startedAt: Date.now()
+    };
+  }
+
+  function totalMarks() {
+    return exam.questions.reduce(function (a, q) { return a + q.marks; }, 0);
+  }
+
+  function answered(q) {
+    var a = session.answers[q.n];
+    if (!a) return false;
+    if (q.type === 'mcq') return !!a.sel;
+    if (!a.blanks) return false;
+    for (var i = 1; i <= q.blanks.length; i++) {
+      if (String(a.blanks[i] || '').trim() !== '') return true;
+    }
+    return false;
+  }
+
+  function gradeQuestion(q) {
+    var a = session.answers[q.n];
+    var res = { question: q, state: 'skipped', given: '', expected: '', marks: 0 };
+
+    if (q.type === 'mcq') {
+      res.expected = q.answer + '. ' + optionText(q, q.answer);
+      if (!a || !a.sel) return res;
+      res.given = a.sel + '. ' + optionText(q, a.sel);
+      if (a.sel === q.answer) { res.state = 'ok'; res.marks = q.marks; }
+      else res.state = 'bad';
+      return res;
+    }
+
+    var blanks = q.blanks;
+    res.expected = blanks.map(function (b) { return b.n + '. ' + (b.answer || '(free response)'); }).join('   ');
+    if (!a || !a.blanks) return res;
+    res.given = blanks.map(function (b) { return b.n + '. ' + (a.blanks[b.n] || '(blank)'); }).join('   ');
+
+    var allGood = true, anyGiven = false;
+    for (var i = 0; i < blanks.length; i++) {
+      var b = blanks[i];
+      var got = String((a.blanks && a.blanks[b.n]) || '');
+      if (got.trim() === '') { allGood = false; continue; }
+      anyGiven = true;
+      if (b.freeform) continue;
+      if (normalize(got) !== normalize(b.answer)) allGood = false;
+    }
+    if (!anyGiven) return res;
+    res.state = allGood ? 'ok' : 'bad';
+    res.marks = allGood ? q.marks : 0;
+    return res;
+  }
+
+  function optionText(q, letter) {
+    for (var i = 0; i < q.options.length; i++) {
+      if (q.options[i].l === letter) return q.options[i].t;
+    }
+    return '';
+  }
+
+  /* --------------------------------------------------------------- screens */
+  function showScreen(which) {
+    $('screen-picker').hidden = which !== 'picker';
+    $('screen-exam').hidden = which !== 'exam';
+    $('screen-review').hidden = which !== 'review';
+  }
+
+  /* --------------------------------------------------------------- picker */
+  function renderPicker() {
+    var list = $('exam-list');
+    list.innerHTML = '';
+    EXAMS.forEach(function (e, idx) {
+      var saved = loadSaved(e.id);
+      var card = el('button', 'exam-card');
+      card.type = 'button';
+
+      card.appendChild(el('h2', null, e.title));
+      card.appendChild(el('div', 'exam-card-source', e.source));
+
+      var meta = el('div', 'exam-card-meta');
+      var mcq = 0, fib = 0;
+      e.questions.forEach(function (q) { if (q.type === 'mcq') mcq++; else fib++; });
+      meta.appendChild(el('span', 'chip', e.questions.length + ' questions'));
+      if (mcq) meta.appendChild(el('span', 'chip alt', mcq + ' MCQ'));
+      if (fib) meta.appendChild(el('span', 'chip alt', fib + ' fill-in'));
+      meta.appendChild(el('span', 'chip alt', totalMarksOf(e) + ' marks'));
+      meta.appendChild(el('span', 'chip alt', e.duration + ' min'));
+      card.appendChild(meta);
+
+      if (saved && !saved.submitted) {
+        var done = e.questions.filter(function (q) { return savedAnswered(saved, q); }).length;
+        card.appendChild(el('div', 'exam-card-resume', 'In progress — ' + done + ' of ' + e.questions.length + ' answered'));
+      } else if (saved && saved.submitted) {
+        var g = gradeAll(e, saved);
+        card.appendChild(el('div', 'exam-card-resume', 'Completed — ' + g.earned + '/' + g.total + ' marks'));
+      }
+
+      var cta = el('span', 'exam-card-cta',
+        saved && !saved.submitted ? 'Resume paper' : (saved && saved.submitted ? 'View results' : 'Start paper'));
+      card.appendChild(cta);
+
+      card.addEventListener('click', function () { startExam(EXAMS[idx]); });
+      list.appendChild(card);
+    });
+    showScreen('picker');
+  }
+
+  function totalMarksOf(e) {
+    return e.questions.reduce(function (a, q) { return a + q.marks; }, 0);
+  }
+
+  function savedAnswered(sv, q) {
+    var a = sv.answers && sv.answers[q.n];
+    if (!a) return false;
+    if (q.type === 'mcq') return !!a.sel;
+    if (!a.blanks) return false;
+    for (var i = 1; i <= q.blanks.length; i++) {
+      if (String(a.blanks[i] || '').trim() !== '') return true;
+    }
+    return false;
+  }
+
+  function gradeAll(e, sv) {
+    var total = 0, earned = 0, correct = 0, wrong = 0, skipped = 0;
+    e.questions.forEach(function (q) {
+      total += q.marks;
+      var a = sv.answers && sv.answers[q.n];
+      if (!a || !savedAnswered(sv, q)) { skipped++; return; }
+      if (q.type === 'mcq') {
+        if (a.sel === q.answer) { correct++; earned += q.marks; } else wrong++;
+        return;
+      }
+      var allGood = true;
+      for (var i = 0; i < q.blanks.length; i++) {
+        var b = q.blanks[i];
+        var got = String((a.blanks && a.blanks[b.n]) || '');
+        if (got.trim() === '' || b.freeform) { if (got.trim() === '') allGood = false; continue; }
+        if (normalize(got) !== normalize(b.answer)) allGood = false;
+      }
+      if (allGood) { correct++; earned += q.marks; } else wrong++;
+    });
+    return { total: total, earned: earned, correct: correct, wrong: wrong, skipped: skipped };
+  }
+
+  /* ------------------------------------------------------------ exam start */
+  function normalizeSession(sv) {
+    if (sv.answers == null) sv.answers = {};
+    if (sv.strikes == null) sv.strikes = {};
+    if (sv.flagged == null) sv.flagged = {};
+    if (!sv.current) sv.current = 1;
+    if (typeof sv.remaining !== 'number') sv.remaining = exam.duration * 60;
+    return sv;
+  }
+
+  function startExam(e) {
+    exam = e;
+    var saved = loadSaved(e.id);
+    reviewLook = false;
+
+    if (saved && saved.submitted) {
+      session = normalizeSession(saved);
+      renderReview();
+      return;
+    }
+
+    session = normalizeSession(saved || freshSession());
+    save();
+    $('exam-title').textContent = e.headerName;
+    buildRail();
+    renderQuestion(true);
+    updateFooter();
+    startTimer();
+    showScreen('exam');
+    closeMenus();
+  }
+
+  function retakeExam() {
+    try { localStorage.removeItem(storeKey(exam.id)); } catch (err) {}
+    session = normalizeSession(freshSession());
+    save();
+    reviewLook = false;
+    $('exam-title').textContent = exam.headerName;
+    buildRail();
+    renderQuestion(true);
+    updateFooter();
+    startTimer();
+    showScreen('exam');
+  }
+
+  /* The clock is a prompt, not a gate: at zero it warns once and then counts
+     the overrun upwards while the paper stays fully editable. */
+  function startTimer() {
+    if (timerId) clearInterval(timerId);
+    paintTimer();
+    timerId = setInterval(function () {
+      session.remaining -= 1;
+      paintTimer();
+      if (session.remaining === 0) {
+        toast('Time is up. The paper stays open — the clock is now counting your overrun.');
+      }
+      if (session.remaining % 10 === 0) save();
+    }, 1000);
+  }
+
+  function paintTimer() {
+    var t = $('timer');
+    var over = session.remaining < 0;
+    t.textContent = (over ? '+' : '') + fmtClock(Math.abs(session.remaining));
+    $('timer-label').textContent = over ? 'TIME OVER' : 'TIME REMAINING';
+    t.classList.toggle('low', !over && session.remaining <= 300);
+    t.classList.toggle('over', over);
+  }
+
+  /* ------------------------------------------------------------------ rail */
+  var railFilter = 'all';
+
+  function buildRail() {
+    var list = $('rail-list');
+    list.innerHTML = '';
+
+    var visible = exam.questions.filter(function (q) {
+      if (railFilter === 'flagged') return !!session.flagged[q.n];
+      if (railFilter === 'unanswered') return !answered(q);
+      if (railFilter === 'mcq') return q.type === 'mcq';
+      if (railFilter === 'fib') return q.type === 'fib';
+      return true;
+    });
+
+    visible.forEach(function (q) {
+      var b = el('button', 'rail-dot', String(q.n));
+      b.type = 'button';
+      b.title = 'Question ' + q.n + ' · ' + q.marks + ' mark' + (q.marks > 1 ? 's' : '') +
+                (session.flagged[q.n] ? ' · flagged' : '');
+      if (q.n === session.current) b.classList.add('current');
+      if (answered(q)) b.classList.add('answered');
+      if (session.flagged[q.n]) b.classList.add('flagged');
+      b.addEventListener('click', function () { gotoQuestion(q.n); });
+      list.appendChild(b);
+    });
+
+    Array.prototype.forEach.call($('rail-filter-panel').children, function (btn) {
+      btn.classList.toggle('active', btn.dataset.filter === railFilter);
+    });
+
+    var current = list.querySelector('.rail-dot.current');
+    if (current) {
+      var top = current.offsetTop - list.clientHeight / 2 + current.offsetHeight / 2;
+      list.scrollTop = Math.max(0, top);
+    }
+    updateRailCaretState();
+    requestAnimationFrame(updateRailCaretState);
+  }
+
+  function updateRailCaretState() {
+    var list = $('rail-list');
+    $('rail-up').disabled = list.scrollTop <= 0;
+    $('rail-down').disabled = list.scrollTop + list.clientHeight >= list.scrollHeight - 1;
+  }
+
+  function gotoQuestion(n) {
+    session.current = n;
+    save();
+    renderQuestion(true);
+    buildRail();
+    updateFooter();
+    closeMenus();
+  }
+
+  /* -------------------------------------------------------------- question */
+  /* In-place re-renders (selecting an option, eliminating one) must not throw
+     away the reader's scroll position; only a question change resets it. */
+  function renderQuestion(resetScroll) {
+    var q = exam.questions.filter(function (x) { return x.n === session.current; })[0];
+    if (!q) return;
+    var keepScroll = resetScroll ? 0 : $('q-scroll').scrollTop;
+    var a = session.answers[q.n] || {};
+    var reviewing = reviewLook && session.submitted;
+
+    $('q-label').textContent = 'Question ' + q.n + '  (' + q.marks + ' mark' + (q.marks > 1 ? 's' : '') + ')';
+    $('flag-btn').classList.toggle('on', !!session.flagged[q.n]);
+    $('flag-btn').textContent = session.flagged[q.n] ? 'FLAGGED' : 'FLAG QUESTION';
+
+    // stem
+    var stem = $('q-stem');
+    stem.innerHTML = '';
+    q.stem.forEach(function (blk) {
+      if (blk.p != null) stem.appendChild(renderParagraph(blk.p));
+      else if (blk.code != null) stem.appendChild(renderCode(blk.code, a.blanks));
+    });
+
+    // answers
+    var host = $('q-answers');
+    host.innerHTML = '';
+
+    if (q.type === 'mcq') {
+      /* The header states the letter range, then tracks the selection so the
+         chosen option is named even when the list is scrolled or struck out. */
+      var label = 'Answers: A - ' + q.options[q.options.length - 1].l;
+      if (a.sel) label += '   —   selected: ' + a.sel;
+      host.appendChild(el('div', 'answers-label', label));
+
+      var strikes = (session.strikes && session.strikes[q.n]) || {};
+
+      q.options.forEach(function (o) {
+        var row = el('div', 'opt');
+        row.dataset.letter = o.l;
+        if (a.sel === o.l) row.classList.add('selected');
+        if (strikes[o.l]) row.classList.add('struck');
+        if (reviewing) {
+          if (o.l === q.answer) row.classList.add('correct');
+          else if (a.sel === o.l) row.classList.add('wrong');
+        }
+        row.appendChild(el('span', 'opt-letter', o.l));
+        row.appendChild(el('span', 'opt-text', o.t));
+
+        /* The icon on the right rules an option out — it never reveals a key. */
+        if (!reviewing) {
+          var eye = el('button', 'opt-eye' + (strikes[o.l] ? ' on' : ''));
+          eye.type = 'button';
+          eye.title = strikes[o.l] ? 'Undo elimination' : 'Strike through to eliminate';
+          eye.setAttribute('aria-pressed', strikes[o.l] ? 'true' : 'false');
+          eye.innerHTML = EYE_SVG;
+          eye.addEventListener('click', function (ev) {
+            ev.stopPropagation();
+            if (!session.strikes) session.strikes = {};
+            if (!session.strikes[q.n]) session.strikes[q.n] = {};
+            if (session.strikes[q.n][o.l]) delete session.strikes[q.n][o.l];
+            else session.strikes[q.n][o.l] = true;
+            save();
+            renderQuestion(false);
+          });
+          row.appendChild(eye);
+        }
+
+        if (!reviewing) {
+          row.addEventListener('click', function () {
+            session.answers[q.n] = { sel: o.l };
+            save();
+            renderQuestion(false);
+            buildRail();
+            updateFooter();
+          });
+        }
+        host.appendChild(row);
+      });
+      if (reviewing) {
+        host.appendChild(el('div', 'answer-note',
+          'You answered ' + (a.sel || 'nothing') + '. The key is ' + q.answer + '.'));
+      }
+    } else {
+      host.appendChild(el('div', 'answers-label', 'Answers ' +
+        (q.blanks.length === 1 ? '1' : '1 - ' + q.blanks.length)));
+      var blanks = a.blanks || {};
+      q.blanks.forEach(function (b, i) {
+        var row = el('div', 'fib-row');
+        if (String(blanks[b.n] || '') !== '') row.classList.add('solved');
+        if (reviewing) {
+          var got = String(blanks[b.n] || '');
+          var ok = b.freeform ? got.trim() !== '' : (got.trim() !== '' && normalize(got) === normalize(b.answer));
+          row.classList.add(ok ? 'correct' : 'wrong');
+        }
+        row.appendChild(el('span', 'fib-num', b.n + '.'));
+
+        var input = document.createElement('input');
+        input.className = 'fib-input';
+        input.type = 'text';
+        input.autocomplete = 'off';
+        input.spellcheck = false;
+        input.placeholder = b.freeform ? 'type your answer' : 'type the missing expression';
+        input.value = blanks[b.n] || '';
+        if (b.freeform && b.maxLength) input.maxLength = b.maxLength;
+        if (reviewing) input.readOnly = true;
+        input.addEventListener('input', function () {
+          if (reviewing) return;
+          if (!session.answers[q.n]) session.answers[q.n] = {};
+          if (!session.answers[q.n].blanks) session.answers[q.n].blanks = {};
+          session.answers[q.n].blanks[b.n] = input.value;
+          row.classList.toggle('solved', input.value.trim() !== '');
+          save();
+          buildRail();
+          updateFooter();
+        });
+        input.addEventListener('keydown', function (ev) {
+          if (ev.key === 'Enter') {
+            ev.preventDefault();
+            if (i < q.blanks.length - 1) {
+              var next = host.querySelectorAll('.fib-input')[i + 1];
+              if (next) next.focus();
+            } else if (session.current < exam.questions.length) {
+              nextQuestion();
+            }
+          }
+        });
+        row.appendChild(input);
+
+        if (reviewing && !b.freeform) {
+          row.appendChild(el('span', 'fib-expected', b.answer));
+        }
+        host.appendChild(row);
+      });
+      if (reviewing) {
+        host.appendChild(el('div', 'answer-note', 'Correct answers are shown in green on the right of each row.'));
+      } else if (q.blanks.length > 1) {
+        host.appendChild(el('div', 'answer-note',
+          'Every blank must be correct to earn the marks — there is no partial credit on fill-in questions.'));
+      }
+    }
+
+    $('q-scroll').scrollTop = keepScroll;
+  }
+
+  /* -------------------------------------------------------------- footer */
+  function updateFooter() {
+    if (reviewLook) {
+      $('footer-progress').textContent = 'REVIEW';
+      $('prev-btn').disabled = false;
+      $('next-btn').textContent = 'Back to results';
+      $('next-btn').classList.remove('finish');
+      return;
+    }
+    var idx = exam.questions.map(function (q) { return q.n; }).indexOf(session.current);
+    $('footer-progress').textContent = (idx + 1) + ' OF ' + exam.questions.length + ' QUESTIONS';
+    $('prev-btn').disabled = idx === 0;
+    var last = idx === exam.questions.length - 1;
+    $('next-btn').textContent = last ? 'Finish' : 'Next';
+    $('next-btn').classList.toggle('finish', last);
+  }
+
+  function nextQuestion() {
+    if (reviewLook) { reviewLook = false; renderReview(); return; }
+    var idx = exam.questions.map(function (q) { return q.n; }).indexOf(session.current);
+    if (idx < exam.questions.length - 1) gotoQuestion(exam.questions[idx + 1].n);
+    else confirmSubmit();
+  }
+
+  function prevQuestion() {
+    var idx = exam.questions.map(function (q) { return q.n; }).indexOf(session.current);
+    if (idx > 0) gotoQuestion(exam.questions[idx - 1].n);
+  }
+
+  /* ---------------------------------------------------------------- modals */
+  function openModal(title, bodyNodes, actions) {
+    $('modal-title').textContent = title;
+    var body = $('modal-body');
+    body.innerHTML = '';
+    bodyNodes.forEach(function (n) { body.appendChild(n); });
+
+    var bar = $('modal-actions');
+    bar.innerHTML = '';
+    actions.forEach(function (act) {
+      var b = el('button', act.kind || 'btn-outline', act.label);
+      b.type = 'button';
+      b.addEventListener('click', act.onClick);
+      bar.appendChild(b);
+    });
+    $('modal').hidden = false;
+  }
+
+  function closeModal() { $('modal').hidden = true; }
+
+  function confirmSubmit() {
+    var notAnswered = exam.questions.filter(function (q) { return !answered(q); });
+    var flagged = exam.questions.filter(function (q) { return session.flagged[q.n]; });
+    var nodes = [];
+
+    nodes.push(el('p', null,
+      'You have answered ' + (exam.questions.length - notAnswered.length) +
+      ' of ' + exam.questions.length + ' questions.'));
+
+    var ul = el('ul');
+    if (notAnswered.length) {
+      ul.appendChild(el('li', null, 'Unanswered: ' + notAnswered.map(function (q) { return q.n; }).join(', ')));
+    }
+    if (flagged.length) {
+      ul.appendChild(el('li', null, 'Flagged: ' + flagged.map(function (q) { return q.n; }).join(', ')));
+    }
+    ul.appendChild(el('li', null, 'Submitting just shows the answer key — you can pick the paper back up afterwards.'));
+    nodes.push(ul);
+
+    openModal('Submit exam?', nodes, [
+      { label: 'Keep working', kind: 'btn-outline', onClick: closeModal },
+      { label: 'Submit', kind: 'btn-solid', onClick: function () { closeModal(); submitExam(); } }
+    ]);
+  }
+
+  function submitExam() {
+    if (timerId) { clearInterval(timerId); timerId = null; }
+    session.submitted = true;
+    session.submittedAt = Date.now();
+    save();
+    renderReview();
+  }
+
+  /* Undo a submission without touching the answers — the results screen is a
+     place to check your work, never a dead end. */
+  function continuePaper() {
+    session.submitted = false;
+    session.submittedAt = null;
+    save();
+    reviewLook = false;
+    $('exam-title').textContent = exam.headerName;
+    buildRail();
+    renderQuestion(true);
+    updateFooter();
+    startTimer();
+    showScreen('exam');
+  }
+
+  /* ---------------------------------------------------------------- review */
+  function renderReview() {
+    $('review-title').textContent = exam.headerName + ' — results';
+
+    var results = exam.questions.map(gradeQuestion);
+    var earned = 0, total = 0, correct = 0, wrong = 0, skipped = 0;
+    results.forEach(function (r) {
+      total += r.question.marks;
+      earned += r.marks;
+      if (r.state === 'ok') correct++;
+      else if (r.state === 'bad') wrong++;
+      else skipped++;
+    });
+    var pct = total ? Math.round((earned / total) * 100) : 0;
+
+    var ring = $('score-ring');
+    ring.className = 'score-ring ' + (pct >= 75 ? 'good' : pct >= 50 ? 'mid' : 'bad');
+    $('score-pct').textContent = pct + '%';
+
+    var stats = $('review-stats');
+    stats.innerHTML = '';
+    [
+      ['Marks', earned + ' / ' + total],
+      ['Correct', String(correct), 'ok'],
+      ['Incorrect', String(wrong), 'bad'],
+      ['Not answered', String(skipped)],
+      ['Time used', fmtClock(exam.duration * 60 - session.remaining)]
+    ].forEach(function (row) {
+      var s = el('div', 'review-stat');
+      s.appendChild(el('span', 'k', row[0]));
+      s.appendChild(el('span', 'v' + (row[2] ? ' ' + row[2] : ''), row[1]));
+      stats.appendChild(s);
+    });
+
+    if (session.remaining < 0) {
+      var overStat = el('div', 'review-stat');
+      overStat.appendChild(el('span', 'k', 'Overrun'));
+      overStat.appendChild(el('span', 'v bad', '+' + fmtClock(-session.remaining)));
+      stats.appendChild(overStat);
+    }
+
+    var host = $('review-breakdown');
+    host.innerHTML = '';
+    results.forEach(function (r) {
+      var card = el('div', 'review-card ' + r.state);
+      var head = el('div', 'review-card-head');
+      head.appendChild(el('span', 'num', 'Question ' + r.question.n));
+      var v = el('span', 'verdict ' + (r.state === 'ok' ? 'ok' : r.state === 'bad' ? 'bad' : 'skip'),
+        r.state === 'ok' ? 'Correct' : r.state === 'bad' ? 'Incorrect' : 'Not answered');
+      head.appendChild(v);
+      head.appendChild(el('span', 'marks', r.marks + ' / ' + r.question.marks + ' marks'));
+      card.appendChild(head);
+
+      if (r.given) {
+        card.appendChild(el('div', 'given', 'Your answer:   ' + r.given));
+      }
+      card.appendChild(el('div', 'expected', 'Correct answer: ' + r.expected));
+      if (r.question.explanation) {
+        card.appendChild(el('div', 'explain', r.question.explanation));
+      }
+
+      var jump = el('button', 'review-back-btn', 'Open this question');
+      jump.type = 'button';
+      jump.addEventListener('click', function () {
+        reviewLook = true;
+        showScreen('exam');
+        gotoQuestion(r.question.n);
+      });
+      card.appendChild(jump);
+      host.appendChild(card);
+    });
+
+    showScreen('review');
+  }
+
+  /* ------------------------------------------------------------- tool kit */
+  function toast(msg) {
+    var t = $('q-toast');
+    t.textContent = msg;
+    t.hidden = false;
+    clearTimeout(toast._id);
+    toast._id = setTimeout(function () { t.hidden = true; }, 3200);
+  }
+
+  function closeMenus() {
+    $('exam-controls-menu').hidden = true;
+    $('toolkit-menu').hidden = true;
+    $('q-more-menu').hidden = true;
+    $('q-jump-menu').hidden = true;
+    $('rail-filter-panel').hidden = true;
+  }
+
+  function buildJumpMenu() {
+    var menu = $('q-jump-menu');
+    menu.innerHTML = '';
+    menu.appendChild(el('div', 'menu-head', 'Jump to question'));
+    exam.questions.forEach(function (q) {
+      var b = el('button', null,
+        'Question ' + q.n + (session.flagged[q.n] ? '  ⚑' : '') +
+        (answered(q) ? '  ✓' : ''));
+      b.type = 'button';
+      b.addEventListener('click', function () { gotoQuestion(q.n); });
+      menu.appendChild(b);
+    });
+  }
+
+  /* ---------------------------------------------------------------- wiring */
+  function init() {
+    if (!EXAMS.length) {
+      $('exam-list').textContent = 'No papers loaded.';
+      return;
+    }
+
+    $('next-btn').addEventListener('click', nextQuestion);
+    $('prev-btn').addEventListener('click', prevQuestion);
+
+    $('flag-btn').addEventListener('click', function () {
+      if (reviewLook || session.submitted) return;
+      if (session.flagged[session.current]) delete session.flagged[session.current];
+      else session.flagged[session.current] = true;
+      save();
+      renderQuestion(false);
+      buildRail();
+    });
+
+    $('q-jump').addEventListener('click', function (e) {
+      e.stopPropagation();
+      var open = $('q-jump-menu').hidden;
+      closeMenus();
+      if (open) { buildJumpMenu(); $('q-jump-menu').hidden = false; }
+    });
+
+    $('q-more').addEventListener('click', function (e) {
+      e.stopPropagation();
+      var open = $('q-more-menu').hidden;
+      closeMenus();
+      if (open) $('q-more-menu').hidden = false;
+    });
+
+    $('q-more-menu').addEventListener('click', function (e) {
+      var action = e.target.dataset && e.target.dataset.action;
+      if (!action) return;
+      closeMenus();
+      if (action === 'strike') toast('Strike-through applies to tool-kit text selections.');
+      else if (action === 'highlight') toast('Highlight applies to tool-kit text selections.');
+      else toast('Highlights cleared.');
+    });
+
+    $('exam-controls-btn').addEventListener('click', function (e) {
+      e.stopPropagation();
+      var open = $('exam-controls-menu').hidden;
+      closeMenus();
+      if (open) $('exam-controls-menu').hidden = false;
+    });
+
+    $('exam-controls-menu').addEventListener('click', function (e) {
+      var action = e.target.dataset && e.target.dataset.action;
+      if (!action) return;
+      closeMenus();
+      if (action === 'submit') confirmSubmit();
+      else if (action === 'quit') {
+        openModal('Exit and discard?', [
+          el('p', null, 'Your answers for this paper will be deleted from this browser.')
+        ], [
+          { label: 'Cancel', kind: 'btn-outline', onClick: closeModal },
+          { label: 'Discard', kind: 'btn-solid', onClick: function () {
+            try { localStorage.removeItem(storeKey(exam.id)); } catch (err) {}
+            closeModal();
+            if (timerId) { clearInterval(timerId); timerId = null; }
+            session = null; exam = null;
+            renderPicker();
+          } }
+        ]);
+      }
+    });
+
+    $('toolkit-btn').addEventListener('click', function (e) {
+      e.stopPropagation();
+      closeMenus();
+      // Toggle the toolkit panel directly
+      if ($('toolkit-panel').hidden) {
+        openToolkit();
+      } else {
+        closeToolkit();
+      }
+    });
+
+    $('toolkit-menu').addEventListener('click', function (e) {
+      var action = e.target.dataset && e.target.dataset.action;
+      if (!action) return;
+      closeMenus();
+      if (action === 'calc') openToolkit();
+      else if (action === 'notes') toast('Notes are not enabled in this practice clone.');
+      else if (action === 'highlights') toast('No highlights yet.');
+      else toast('Shortcuts: ← / → move between questions, F flags, Enter moves on.');
+    });
+
+    $('rail-filter').addEventListener('click', function (e) {
+      e.stopPropagation();
+      var open = $('rail-filter-panel').hidden;
+      closeMenus();
+      if (open) $('rail-filter-panel').hidden = false;
+    });
+
+    $('rail-filter-panel').addEventListener('click', function (e) {
+      var f = e.target.dataset && e.target.dataset.filter;
+      if (!f) return;
+      railFilter = f;
+      closeMenus();
+      buildRail();
+    });
+
+    $('rail-up').addEventListener('click', function () {
+      $('rail-list').scrollTop -= 120;
+      updateRailCaretState();
+    });
+    $('rail-down').addEventListener('click', function () {
+      $('rail-list').scrollTop += 120;
+      updateRailCaretState();
+    });
+
+    $('review-back').addEventListener('click', function () {
+      reviewLook = false;
+      session = null; exam = null;
+      renderPicker();
+    });
+
+    $('review-retake').addEventListener('click', retakeExam);
+    $('review-continue').addEventListener('click', continuePaper);
+
+    document.addEventListener('click', function () { closeMenus(); });
+    $('modal').addEventListener('click', function (e) {
+      if (e.target === $('modal')) closeModal();
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
+      if ($('screen-exam').hidden || !session || (session.submitted && !reviewLook)) return;
+      if (e.key === 'ArrowRight' && !$('next-btn').disabled) nextQuestion();
+      else if (e.key === 'ArrowLeft') prevQuestion();
+      else if ((e.key === 'f' || e.key === 'F') && !reviewLook) $('flag-btn').click();
+      else if (e.key === 'Escape') closeMenus();
+    });
+
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) save(); });
+    window.addEventListener('beforeunload', save);
+
+    $('clock').textContent = new Date().toTimeString().slice(0, 5);
+    setInterval(function () {
+      $('clock').textContent = new Date().toTimeString().slice(0, 5);
+    }, 30000);
+
+    /* Draw the papers first, then light up the tool kit. The calculator is a
+       self-contained extra: if any part of it fails, the exam app still works. */
+    renderPicker();
+
+    try {
+      initCalculator();
+    } catch (err) {
+      if (window.console && console.error) console.error('Calculator failed to initialise:', err);
+    }
+  }
+
+  /* ================================================================
+     CALCULATOR  —  Keyboard Friendly + Classic (Scientific)
+     ================================================================ */
+
+  /* Scientific keys that are relabelled (and remapped) while INV is active. */
+  var CL_INV_KEYS = ['sin', 'cos', 'tan', 'log', 'ln', '√', 'x^y'];
+
+  function openToolkit() {
+    $('toolkit-panel').hidden = false;
+  }
+
+  function closeToolkit() {
+    $('toolkit-panel').hidden = true;
+  }
+
+  /* Safe math evaluator — converts display expressions to JS-evaluable strings. */
+  function calcEval(expr) {
+    // Replace display symbols with JS operators
+    var s = expr
+      .replace(/×/g, '*')
+      .replace(/÷/g, '/')
+      .replace(/−/g, '-')
+      .replace(/π/g, '(' + Math.PI + ')')
+      .replace(/\be\^/g, 'Math.E**')   // eˣ (INV of ln) must resolve before ^ → **
+      .replace(/\^/g, '**');
+
+    // Handle √ — √(expr) or √number
+    s = s.replace(/√\(([^)]+)\)/g, 'Math.sqrt($1)');
+    s = s.replace(/√(\d+(\.\d+)?)/g, 'Math.sqrt($1)');
+
+    // Handle factorial n!
+    s = s.replace(/(\d+(\.\d+)?)!/g, '_fact($1)');
+
+    // Handle scientific functions
+    s = s.replace(/\bsin\(/g, '_sin(');
+    s = s.replace(/\bcos\(/g, '_cos(');
+    s = s.replace(/\btan\(/g, '_tan(');
+    s = s.replace(/\basin\(/g, '_asin(');
+    s = s.replace(/\bacos\(/g, '_acos(');
+    s = s.replace(/\batan\(/g, '_atan(');
+    s = s.replace(/\bsinh\(/g, 'Math.sinh(');
+    s = s.replace(/\bcosh\(/g, 'Math.cosh(');
+    s = s.replace(/\btanh\(/g, 'Math.tanh(');
+    s = s.replace(/\basinh\(/g, 'Math.asinh(');
+    s = s.replace(/\bacosh\(/g, 'Math.acosh(');
+    s = s.replace(/\batanh\(/g, 'Math.atanh(');
+    s = s.replace(/\blog\(/g, 'Math.log10(');
+    s = s.replace(/\bln\(/g, 'Math.log(');
+    s = s.replace(/\babs\(/g, 'Math.abs(');
+
+    // Handle EE (scientific notation)
+    s = s.replace(/(\d+(\.\d+)?)E(\d+)/g, '($1*Math.pow(10,$3))');
+    s = s.replace(/(\d+(\.\d+)?)E(-?\d+)/g, '($1*Math.pow(10,$3))');
+
+    try {
+      // Define helper functions in a safe scope
+      var _fact = function(n) {
+        n = Math.round(n);
+        if (n < 0) return NaN;
+        if (n === 0 || n === 1) return 1;
+        if (n > 170) return Infinity;
+        var r = 1;
+        for (var i = 2; i <= n; i++) r *= i;
+        return r;
+      };
+
+      var useRadians = calcClassicState.useRadians;
+      var _sin = function(x) { return Math.sin(useRadians ? x : x * Math.PI / 180); };
+      var _cos = function(x) { return Math.cos(useRadians ? x : x * Math.PI / 180); };
+      var _tan = function(x) { return Math.tan(useRadians ? x : x * Math.PI / 180); };
+      var _asin = function(x) { var r = Math.asin(x); return useRadians ? r : r * 180 / Math.PI; };
+      var _acos = function(x) { var r = Math.acos(x); return useRadians ? r : r * 180 / Math.PI; };
+      var _atan = function(x) { var r = Math.atan(x); return useRadians ? r : r * 180 / Math.PI; };
+
+      /* eslint-disable no-eval */
+      var result = eval(s);
+      /* eslint-enable no-eval */
+      if (typeof result !== 'number') return { error: 'Invalid expression' };
+      return { value: result };
+    } catch (e) {
+      return { error: 'Error' };
+    }
+  }
+
+  function formatResult(val) {
+    if (val === Infinity) return '∞';
+    if (val === -Infinity) return '-∞';
+    if (isNaN(val)) return 'Error';
+    // Up to 10 significant digits, remove trailing zeros
+    var s = parseFloat(val.toPrecision(10)).toString();
+    // If too long, use scientific notation
+    if (s.length > 14) s = val.toExponential(6);
+    return s;
+  }
+
+  /* While INV is active the √ key means x², so √(A) must square the whole
+     parenthesised group — ((A)**2) — not just the first token inside it. */
+  function invSquare(expr) {
+    var out = '';
+    for (var i = 0; i < expr.length; i++) {
+      if (expr.charAt(i) !== '√' || expr.charAt(i + 1) !== '(') {
+        out += expr.charAt(i);
+        continue;
+      }
+      var depth = 0, end = -1;
+      for (var j = i + 1; j < expr.length; j++) {
+        if (expr.charAt(j) === '(') depth++;
+        else if (expr.charAt(j) === ')' && --depth === 0) { end = j; break; }
+      }
+      if (end < 0) { out += expr.charAt(i); continue; }
+      out += '((' + expr.slice(i + 2, end) + ')**2)';
+      i = end;
+    }
+    return out;
+  }
+
+  /* ---------- Keyboard Friendly state ---------- */
+  var calcKBState = {
+    history: [],       // array of {expr, result} display strings
+    undoStack: [],     // previous input states for undo
+    redoStack: [],
+    lastAns: 0
+  };
+
+  /* ---------- Classic state ---------- */
+  var calcClassicState = {
+    useRadians: false,
+    invMode: false,
+    lastAns: 0,
+    currentInput: '0',
+    justEvaluated: false
+  };
+
+  function initCalculator() {
+    /* --- Toolkit close --- */
+    on('toolkit-close-link', 'click', function (e) {
+      e.preventDefault();
+      closeToolkit();
+    });
+
+    /* --- Tab switching --- */
+    var tabs = $('toolkit-panel').querySelectorAll('.toolkit-tab');
+    Array.prototype.forEach.call(tabs, function (tab) {
+      tab.addEventListener('click', function () {
+        Array.prototype.forEach.call(tabs, function (t) { t.classList.remove('active'); });
+        tab.classList.add('active');
+        // For now only the calculator tab has content
+      });
+    });
+
+    /* --- Mode switching --- */
+    on('calc-mode-keyboard', 'click', function () {
+      $('calc-mode-keyboard').classList.add('active');
+      $('calc-mode-classic').classList.remove('active');
+      $('calc-keyboard').hidden = false;
+      $('calc-classic').hidden = true;
+    });
+
+    on('calc-mode-classic', 'click', function () {
+      $('calc-mode-classic').classList.add('active');
+      $('calc-mode-keyboard').classList.remove('active');
+      $('calc-classic').hidden = false;
+      $('calc-keyboard').hidden = true;
+    });
+
+    initKeyboardCalc();
+    initClassicCalc();
+  }
+
+  /* ================================================================
+     KEYBOARD FRIENDLY Calculator
+     ================================================================ */
+  function initKeyboardCalc() {
+    var input = $('calc-kb-input');
+
+    /* Button clicks */
+    $('calc-keyboard').querySelectorAll('.calc-kb-grid .calc-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var val = btn.dataset.val;
+        if (!val) return;
+        if (val === 'ans') {
+          pushUndo();
+          input.value += formatResult(calcKBState.lastAns);
+        } else {
+          pushUndo();
+          input.value += val;
+        }
+        input.focus();
+      });
+    });
+
+    /* Enter / evaluate */
+    on('calc-kb-enter', 'click', function () {
+      evaluateKB();
+    });
+
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        evaluateKB();
+      }
+    });
+
+    /* Undo / Redo */
+    on('calc-kb-undo', 'click', function () {
+      if (calcKBState.undoStack.length) {
+        calcKBState.redoStack.push(input.value);
+        input.value = calcKBState.undoStack.pop();
+      }
+    });
+
+    on('calc-kb-redo', 'click', function () {
+      if (calcKBState.redoStack.length) {
+        calcKBState.undoStack.push(input.value);
+        input.value = calcKBState.redoStack.pop();
+      }
+    });
+
+    /* Clear all */
+    on('calc-kb-clear', 'click', function () {
+      input.value = '';
+      calcKBState.history = [];
+      calcKBState.undoStack = [];
+      calcKBState.redoStack = [];
+      calcKBState.lastAns = 0;
+      renderKBHistory();
+    });
+
+    /* Backspace */
+    on('calc-kb-backspace', 'click', function () {
+      pushUndo();
+      input.value = input.value.slice(0, -1);
+      input.focus();
+    });
+  }
+
+  function pushUndo() {
+    var input = $('calc-kb-input');
+    calcKBState.undoStack.push(input.value);
+    calcKBState.redoStack = [];
+  }
+
+  function evaluateKB() {
+    var input = $('calc-kb-input');
+    var expr = input.value.trim();
+    if (!expr) return;
+
+    // Replace 'ans' with last answer value
+    var evalExpr = expr.replace(/\bans\b/g, '(' + calcKBState.lastAns + ')');
+
+    var result = calcEval(evalExpr);
+    if (result.error) {
+      calcKBState.history.push({ expr: expr, result: result.error });
+    } else {
+      calcKBState.lastAns = result.value;
+      calcKBState.history.push({ expr: expr, result: '= ' + formatResult(result.value) });
+    }
+
+    renderKBHistory();
+    input.value = '';
+    calcKBState.undoStack = [];
+    calcKBState.redoStack = [];
+  }
+
+  function renderKBHistory() {
+    var hist = $('calc-kb-history');
+    hist.innerHTML = '';
+    calcKBState.history.forEach(function (h) {
+      var row = document.createElement('div');
+      row.className = 'calc-hist-row';
+      row.innerHTML = '<span class="calc-hist-expr">' + esc(h.expr) + '</span>' +
+        '<span class="calc-hist-res">' + esc(h.result) + ' <span class="calc-hist-icon" title="Toggle">&#8942;</span></span>';
+      hist.appendChild(row);
+    });
+    // Auto-scroll to bottom
+    hist.scrollTop = hist.scrollHeight;
+  }
+
+  /* ================================================================
+     CLASSIC (Scientific) Calculator
+     ================================================================ */
+  function initClassicCalc() {
+    var input = $('calc-cl-input');
+
+    /* Number & operator buttons */
+    $('calc-classic').querySelectorAll('.calc-cl-grid .calc-btn[data-val]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var val = btn.dataset.val;
+
+        // Scientific functions that open a paren
+        var sciOpenFns = ['sin', 'cos', 'tan', 'log', 'ln', 'asin', 'acos', 'atan', 'sinh', 'cosh', 'tanh', 'asinh', 'acosh', 'atanh'];
+        var isSciOpen = sciOpenFns.indexOf(val) >= 0;
+
+        if (isSciOpen) {
+          // If INV mode is on, swap to inverse functions
+          if (calcClassicState.invMode) {
+            if (val === 'sin') val = 'asin';
+            else if (val === 'cos') val = 'acos';
+            else if (val === 'tan') val = 'atan';
+            else if (val === 'log') val = '10^';
+            else if (val === 'ln') val = 'e^';
+          }
+          if (calcClassicState.justEvaluated) {
+            input.value = val + '(';
+            calcClassicState.justEvaluated = false;
+          } else if (input.value === '0') {
+            input.value = val + '(';
+          } else {
+            input.value += val + '(';
+          }
+          return;
+        }
+
+        // Special functions
+        if (val === 'π') {
+          if (calcClassicState.justEvaluated || input.value === '0') {
+            input.value = 'π';
+          } else {
+            input.value += 'π';
+          }
+          calcClassicState.justEvaluated = false;
+          return;
+        }
+
+        if (val === 'n!') {
+          input.value += '!';
+          calcClassicState.justEvaluated = false;
+          return;
+        }
+
+        if (val === '√') {
+          if (calcClassicState.justEvaluated || input.value === '0') {
+            input.value = '√(';
+          } else {
+            input.value += '√(';
+          }
+          calcClassicState.justEvaluated = false;
+          return;
+        }
+
+        if (val === '1/x') {
+          var curVal = input.value;
+          if (curVal && curVal !== '0') {
+            input.value = '1/(' + curVal + ')';
+          }
+          calcClassicState.justEvaluated = false;
+          return;
+        }
+
+        if (val === 'x^y') {
+          if (calcClassicState.invMode) {
+            // x^(1/y) for INV mode
+            input.value += '^(1/';
+          } else {
+            input.value += '^';
+          }
+          calcClassicState.justEvaluated = false;
+          return;
+        }
+
+        if (val === 'EE') {
+          input.value += 'E';
+          calcClassicState.justEvaluated = false;
+          return;
+        }
+
+        // Operators
+        var operators = ['+', '−', '×', '÷'];
+        if (operators.indexOf(val) >= 0) {
+          calcClassicState.justEvaluated = false;
+          // Avoid double operators
+          var last = input.value.slice(-1);
+          if (operators.indexOf(last) >= 0 || last === '+' || last === '-') {
+            input.value = input.value.slice(0, -1) + ' ' + val + ' ';
+          } else {
+            input.value += ' ' + val + ' ';
+          }
+          return;
+        }
+
+        // Numbers, parentheses, decimal
+        if (calcClassicState.justEvaluated && /[0-9.]/.test(val)) {
+          input.value = val;
+          calcClassicState.justEvaluated = false;
+          return;
+        }
+
+        if (input.value === '0' && val !== '.') {
+          input.value = val;
+        } else {
+          input.value += val;
+        }
+        calcClassicState.justEvaluated = false;
+      });
+    });
+
+    /* Equals button */
+    on('calc-cl-eq', 'click', function () {
+      evaluateClassic();
+    });
+
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        evaluateClassic();
+      }
+    });
+
+    /* AC */
+    on('calc-cl-ac', 'click', function () {
+      input.value = '0';
+      calcClassicState.lastAns = 0;
+      calcClassicState.justEvaluated = false;
+      $('calc-cl-ans').textContent = '0';
+    });
+
+    /* Del */
+    on('calc-cl-del', 'click', function () {
+      if (input.value.length > 1) {
+        input.value = input.value.slice(0, -1);
+      } else {
+        input.value = '0';
+      }
+      calcClassicState.justEvaluated = false;
+    });
+
+    /* Radian toggle */
+    on('calc-cl-rad', 'click', function () {
+      calcClassicState.useRadians = !calcClassicState.useRadians;
+      $('calc-cl-deg').textContent = calcClassicState.useRadians ? 'RAD' : 'DEG';
+      $('calc-cl-rad').textContent = calcClassicState.useRadians ? 'Degree' : 'Radian';
+    });
+
+    /* INV toggle */
+    on('calc-cl-inv', 'click', function () {
+      calcClassicState.invMode = !calcClassicState.invMode;
+      $('calc-cl-inv').classList.toggle('active-toggle', calcClassicState.invMode);
+
+      // Update button labels for inv mode
+      var sciButtons = $('calc-classic').querySelectorAll('.calc-cl-grid .calc-btn[data-val]');
+      Array.prototype.forEach.call(sciButtons, function (btn) {
+        var val = btn.dataset.val;
+        if (CL_INV_KEYS.indexOf(val) < 0) return;
+        if (calcClassicState.invMode) {
+          if (val === 'sin') btn.innerHTML = 'sin<sup>-1</sup>';
+          else if (val === 'cos') btn.innerHTML = 'cos<sup>-1</sup>';
+          else if (val === 'tan') btn.innerHTML = 'tan<sup>-1</sup>';
+          else if (val === 'log') btn.textContent = '10ˣ';
+          else if (val === 'ln') btn.textContent = 'eˣ';
+          else if (val === '√') btn.textContent = 'x²';
+          else if (val === 'x^y') btn.innerHTML = 'x<sup>1/y</sup>';
+        } else {
+          if (val === 'sin') btn.textContent = 'sin';
+          else if (val === 'cos') btn.textContent = 'cos';
+          else if (val === 'tan') btn.textContent = 'tan';
+          else if (val === 'log') btn.textContent = 'log';
+          else if (val === 'ln') btn.textContent = 'ln';
+          else if (val === '√') btn.textContent = '√';
+          else if (val === 'x^y') btn.innerHTML = 'x<sup>y</sup>';
+        }
+      });
+    });
+  }
+
+  function evaluateClassic() {
+    var input = $('calc-cl-input');
+    var expr = input.value.trim();
+    if (!expr || expr === '0') return;
+
+    // Handle INV mode special evaluations (√ acts as x²)
+    if (calcClassicState.invMode) expr = invSquare(expr);
+
+    var result = calcEval(expr);
+    if (result.error) {
+      input.value = 'Error';
+    } else {
+      calcClassicState.lastAns = result.value;
+      $('calc-cl-ans').textContent = formatResult(result.value);
+      input.value = formatResult(result.value);
+    }
+    calcClassicState.justEvaluated = true;
+  }
+
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+</script>
+</body>
+</html>

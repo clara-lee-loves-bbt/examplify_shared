@@ -1,0 +1,10 @@
+# Source exam papers — kept locally, deliberately not published
+*.pdf
+
+# Agent / tool scratch space
+.freebuff/
+
+# OS noise
+Thumbs.db
+.DS_Store
+desktop.ini

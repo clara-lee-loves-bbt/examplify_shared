@@ -1,0 +1,13 @@
+# Source exam papers — kept locally, deliberately not published
+*.pdf
+
+# Agent / tool scratch space
+.freebuff/
+
+# Regenerable PDF text dumps — rebuild with: python tools/extract-pdfs.py
+tools/text/
+
+# OS noise
+Thumbs.db
+.DS_Store
+desktop.ini
