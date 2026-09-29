@@ -1,5 +1,5 @@
 {
-  "name": "examplify-main",
+  "name": "examplify",
   "version": "1.0.0",
   "description": "A self-contained clone of the Examplify exam interface for practising CS1010E mid-term questions. It reproduces the window chrome, dark header with the countdown, FILTER rail, FLAG QUESTION pill, rounded answer rows, the `Answers: A - E` / `Answers 1 - 3` blocks, and the Previous / Next / Finish footer from the reference screenshots.",
   "main": "app.js",
