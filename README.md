@@ -76,6 +76,8 @@ index.html              same app, multi-file version
 styles.css
 app.js
 build.js                inlines index.html + css + js -> examplify.html
+vercel.json             Vercel settings: static deploy, output = public/
+public/index.html       deployed copy of the bundle (generated, gitignored)
 data/registry.js        registerExam() helper
 data/exam-midterm.js    the bundled paper
 tools/extract-pdfs.py   re-extract the PDFs to text (needs pymupdf)
@@ -102,6 +104,26 @@ To regenerate the extracted text from the PDFs:
 pip install pymupdf
 python tools/extract-pdfs.py    # writes tools/text/*.txt
 ```
+
+## Deploying
+
+Vercel serves this repo as a plain static site. `vercel.json` pins
+`framework: null` and `outputDirectory: "public"`, and `node build.js` writes the
+self-contained bundle to `public/index.html`, so the deployment is a single HTML
+file with no sibling assets that can 404.
+
+```bash
+node build.js   # writes examplify.html (local) and public/index.html (deployed)
+```
+
+Just push to `main` and Vercel rebuilds. There is no server, no function and no
+environment variable to configure. Production URL:
+`https://examplifyshared-racingline.vercel.app` (preview URLs are behind Vercel's
+deployment protection and answer `401` to anyone not signed in).
+
+If a deployment fails with `No Output Directory named "public" found after the
+Build completed`, the build command did not run (or wrote nowhere) — check the
+project's Build Command and Output Directory, since `vercel.json` overrides both.
 
 ## Adding a paper
 

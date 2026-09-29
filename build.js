@@ -30,6 +30,14 @@ html = html.replace(
 
 const out = path.join(root, 'examplify.html');
 fs.writeFileSync(out, html);
+
+// Vercel serves a deployment from its Output Directory (see vercel.json),
+// so emit the same self-contained bundle as public/index.html. The deployed
+// site is then one HTML file with no sibling assets that can 404.
+const publicDir = path.join(root, 'public');
+fs.mkdirSync(publicDir, { recursive: true });
+fs.writeFileSync(path.join(publicDir, 'index.html'), html);
+
 const kb = (fs.statSync(out).size / 1024).toFixed(0);
 
 console.log('Built examplify.html (' + kb + ' KB)');

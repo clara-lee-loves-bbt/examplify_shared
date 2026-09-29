@@ -10,6 +10,9 @@ tools/text/
 # Node modules
 node_modules/
 
+# Vercel build output — regenerate with: node build.js
+public/
+
 # OS noise
 Thumbs.db
 .DS_Store
